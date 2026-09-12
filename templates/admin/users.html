@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Registered Users — Admin Portal — MediCompare{% endblock %}
+
+{% block content %}
+
+<div class="admin-dashboard">
+
+    <!-- ================= HEADER ================= -->
+    <section class="admin-hero" style="background: linear-gradient(135deg, #09172e 0%, #1e40af 55%, #06b6d4 100%);">
+        <div>
+            <span class="eyebrow" style="color: #a5f3fc;">USER MANAGEMENT</span>
+            <h1>👥 Registered Patient Accounts</h1>
+            <p>View all patient and administrator accounts registered across MediCompare.</p>
+        </div>
+        <div class="admin-hero-icon">👤</div>
+    </section>
+
+    <!-- ================= TOOLBAR ================= -->
+    <section class="admin-toolbar">
+        <div>
+            <span class="eyebrow">PATIENT PROFILES</span>
+            <h2>All User Accounts</h2>
+            <p>{{ users|length }} registered accounts in total.</p>
+        </div>
+
+        <a href="/admin/dashboard" class="btn btn-light">
+            ← Back to Dashboard
+        </a>
+    </section>
+
+    <!-- ================= USERS TABLE ================= -->
+    {% if users %}
+        <section class="admin-table-card">
+            <div class="admin-table-wrapper">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Full Name</th>
+                            <th>Email Address</th>
+                            <th>Account Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            <tr>
+                                <td>
+                                    <span style="font-family: 'Outfit', sans-serif; font-weight: 800; color: var(--text-muted);">
+                                        #{{ user.id }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <div style="width: 34px; height: 34px; border-radius: 50%; background: var(--surface-soft); color: var(--primary); display: grid; place-items: center; font-weight: 800; font-size: 13px;">
+                                            {{ user.full_name[0]|upper if user.full_name else 'U' }}
+                                        </div>
+                                        <strong style="color: var(--text-heading);">{{ user.full_name }}</strong>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span style="color: var(--text-body);">{{ user.email }}</span>
+                                </td>
+                                <td>
+                                    {% if user.role == "admin" %}
+                                        <span class="badge" style="background: #f5f3ff; color: var(--violet); border: 1px solid #ddd6fe;">
+                                            👑 Administrator
+                                        </span>
+                                    {% else %}
+                                        <span class="badge" style="background: #ecfdf5; color: var(--emerald); border: 1px solid #a7f3d0;">
+                                            👤 Patient
+                                        </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    {% else %}
+        <div class="empty-modern">
+            <div>👥</div>
+            <h2>No Users Found</h2>
+            <p>No user accounts have been created yet.</p>
+        </div>
+    {% endif %}
+
+    <!-- Back Button -->
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="/admin/dashboard" style="color: var(--primary); font-weight: 700; font-size: 14px;">
+            ← Back to Admin Dashboard
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

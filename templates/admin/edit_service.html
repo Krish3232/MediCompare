@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Hospital Service — Admin Portal — MediCompare{% endblock %}
+
+{% block content %}
+
+<div class="admin-dashboard" style="max-width: 860px; margin: 0 auto;">
+
+    <!-- ================= HEADER ================= -->
+    <section class="admin-hero" style="background: linear-gradient(135deg, #09172e 0%, #1e40af 55%, #06b6d4 100%);">
+        <div>
+            <span class="eyebrow" style="color: #a5f3fc;">TREATMENT CATALOGUE</span>
+            <h1>✏️ Edit Hospital Service</h1>
+            <p>Update procedure specifications or adjusted cost for {{ service.service_name }}.</p>
+        </div>
+        <div class="admin-hero-icon">💰</div>
+    </section>
+
+    <!-- ================= FLASH MESSAGES ================= -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- ================= FORM CARD ================= -->
+    <div class="details-card">
+        <form method="POST" class="admin-form">
+
+            <!-- Section 1: Procedure Details -->
+            <div class="form-section-divider" style="margin-top: 0;">
+                <span class="icon">💊</span>
+                <div>
+                    <h3>Service &amp; Hospital Assignment</h3>
+                </div>
+            </div>
+
+            <div class="form-grid-2">
+                <!-- Hospital -->
+                <div class="form-group">
+                    <label for="hospital_id">
+                        🏥 Assigned Hospital <span class="req">*</span>
+                    </label>
+                    <select id="hospital_id" name="hospital_id" required>
+                        <option value="">Choose Hospital...</option>
+                        {% for hospital in hospitals %}
+                            <option
+                                value="{{ hospital.id }}"
+                                {% if hospital.id == service.hospital_id %}selected{% endif %}
+                            >
+                                {{ hospital.hospital_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Service Name -->
+                <div class="form-group">
+                    <label for="service_name">
+                        💊 Procedure / Treatment Name <span class="req">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="service_name"
+                        name="service_name"
+                        value="{{ service.service_name }}"
+                        placeholder="e.g. MRI Brain Scan"
+                        required
+                    >
+                </div>
+            </div>
+
+            <!-- Section 2: Pricing & Description -->
+            <div class="form-section-divider">
+                <span class="icon">💰</span>
+                <div>
+                    <h3>Pricing &amp; Package Scope</h3>
+                </div>
+            </div>
+
+            <!-- Estimated Cost -->
+            <div class="form-group">
+                <label for="cost">
+                    💰 Estimated Cost (₹) <span class="req">*</span>
+                </label>
+                <input
+                    type="number"
+                    id="cost"
+                    name="cost"
+                    min="0"
+                    value="{{ service.cost or 0 }}"
+                    placeholder="e.g. 5000"
+                    required
+                >
+                <small>Average estimated package price presented to patients for cost comparison.</small>
+            </div>
+
+            <!-- Description -->
+            <div class="form-group">
+                <label for="description">
+                    📝 Inclusions &amp; Procedure Scope
+                </label>
+                <textarea
+                    id="description"
+                    name="description"
+                    rows="3"
+                    placeholder="Provide details about what is included (e.g. pre-op consultation, doctor fee, reports)..."
+                >{{ service.description or "" }}</textarea>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="admin-form-actions">
+                <button type="submit" class="btn-save-action">
+                    💾 Save Service Changes
+                </button>
+                <a href="/admin/services" class="btn-cancel-action">
+                    Cancel
+                </a>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Back Button -->
+    <div style="text-align: center; margin-bottom: 40px;">
+        <a href="/admin/services" style="color: var(--primary); font-weight: 700; font-size: 14px; text-decoration: none;">
+            ← Return to Services Directory
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

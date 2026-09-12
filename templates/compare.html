@@ -1,0 +1,542 @@
+{% extends "base.html" %}
+
+{% block title %}Hospital Comparison Arena — Side-by-Side Analysis — MediCompare{% endblock %}
+
+{% block content %}
+
+<div class="compare-page">
+
+    <!-- =====================================================
+         HERO SECTION
+    ====================================================== -->
+    <section class="compare-hero">
+        <div class="compare-hero-inner">
+            <div class="compare-eyebrow">
+                <span class="pulse-dot"></span> SMART COMPARISON ENGINE
+            </div>
+
+            <h1>
+                Hospital Comparison Arena.
+                <br>
+                <span>Make the Right Clinical Decision.</span>
+            </h1>
+
+            <p>
+                Evaluate ratings, emergency trauma capability, ICU beds, specialist doctor fees, and surgical procedure costs side-by-side.
+            </p>
+        </div>
+    </section>
+
+
+    <!-- =====================================================
+         STEP 1: HOSPITAL SELECTOR
+    ====================================================== -->
+    <section class="compare-selection">
+        <form method="GET" action="/compare" class="compare-form">
+
+            <!-- Hospital 1 Selector -->
+            <div class="hospital-picker">
+                <div class="picker-top">
+                    <span class="picker-number">01 • TARGET</span>
+                    <span class="picker-label">FIRST HOSPITAL</span>
+                </div>
+                <div class="picker-icon">🏥</div>
+                <label for="hospital1">Choose First Hospital</label>
+                <select id="hospital1" name="hospital1" required>
+                    <option value="">Select Hospital 1...</option>
+                    {% for h in hospitals %}
+                        <option
+                            value="{{ h.id }}"
+                            {% if hospital1 and hospital1.id == h.id %}selected{% endif %}
+                        >
+                            {{ h.hospital_name }} ({{ h.city or 'General' }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Glowing VS Badge -->
+            <div class="compare-divider">
+                <span>VS</span>
+            </div>
+
+            <!-- Hospital 2 Selector -->
+            <div class="hospital-picker">
+                <div class="picker-top">
+                    <span class="picker-number">02 • TARGET</span>
+                    <span class="picker-label">SECOND HOSPITAL</span>
+                </div>
+                <div class="picker-icon">🏨</div>
+                <label for="hospital2">Choose Second Hospital</label>
+                <select id="hospital2" name="hospital2" required>
+                    <option value="">Select Hospital 2...</option>
+                    {% for h in hospitals %}
+                        <option
+                            value="{{ h.id }}"
+                            {% if hospital2 and hospital2.id == h.id %}selected{% endif %}
+                        >
+                            {{ h.hospital_name }} ({{ h.city or 'General' }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="compare-action">
+                <button type="submit" class="compare-button">
+                    ⚡ Compare Facilities Now <span>→</span>
+                </button>
+            </div>
+
+        </form>
+    </section>
+
+
+    {% if hospital1 and hospital2 %}
+
+        <!-- =====================================================
+             STEP 2: OVERVIEW CARDS
+        ====================================================== -->
+        <section class="comparison-overview">
+            <div style="margin-bottom: 24px;">
+                <span class="eyebrow">EXECUTIVE HEAD-TO-HEAD</span>
+                <h2 style="font-size: 26px; color: var(--text-heading); margin: 4px 0;">Battle Arena Overview</h2>
+                <p style="color: var(--text-muted); font-size: 14px; margin: 0;">Direct side-by-side profile overview for the two selected institutions.</p>
+            </div>
+
+            <div class="hospital-overview-grid">
+                <!-- Hospital 1 Card -->
+                <div class="overview-card">
+                    <div class="overview-top">
+                        <span class="hospital-badge">HOSPITAL 01</span>
+                        <div style="font-size: 32px;">🏥</div>
+                    </div>
+                    <h3>{{ hospital1.hospital_name }}</h3>
+                    <p class="overview-location">📍 {{ hospital1.city or "Location unavailable" }}</p>
+
+                    <div class="overview-rating">
+                        <span>⭐</span>
+                        <strong>{{ hospital1.rating or "4.5" }}</strong>
+                        <small>/ 5.0</small>
+                    </div>
+
+                    <div>
+                        <span class="hospital-type-badge">
+                            {{ hospital1.hospital_type or "General Hospital" }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- VS Shield -->
+                <div class="overview-vs">
+                    <span>VS</span>
+                </div>
+
+                <!-- Hospital 2 Card -->
+                <div class="overview-card">
+                    <div class="overview-top">
+                        <span class="hospital-badge">HOSPITAL 02</span>
+                        <div style="font-size: 32px;">🏨</div>
+                    </div>
+                    <h3>{{ hospital2.hospital_name }}</h3>
+                    <p class="overview-location">📍 {{ hospital2.city or "Location unavailable" }}</p>
+
+                    <div class="overview-rating">
+                        <span>⭐</span>
+                        <strong>{{ hospital2.rating or "4.5" }}</strong>
+                        <small>/ 5.0</small>
+                    </div>
+
+                    <div>
+                        <span class="hospital-type-badge">
+                            {{ hospital2.hospital_type or "General Hospital" }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =====================================================
+             QUICK INSIGHTS / WINNERS HUD
+        ====================================================== -->
+        <section class="comparison-insights">
+            <div style="margin-bottom: 24px;">
+                <span class="eyebrow">AI INTELLIGENCE WINNERS</span>
+                <h2 style="font-size: 26px; color: var(--text-heading); margin: 4px 0;">At a Glance Highlights</h2>
+                <p style="color: var(--text-muted); font-size: 14px; margin: 0;">Core competitive advantages determined across quality ratings, infrastructure, and fee affordability.</p>
+            </div>
+
+            <div class="insight-grid">
+                <!-- Rating Winner -->
+                <div class="insight-card">
+                    <div class="insight-icon" style="background: #fffbeb; color: #b45309;">⭐</div>
+                    <div>
+                        <span>HIGHER QUALITY SCORE</span>
+                        <strong>{{ rating_winner or "Equal Rating" }}</strong>
+                    </div>
+                </div>
+
+                <!-- Facility Winner -->
+                <div class="insight-card">
+                    <div class="insight-icon" style="background: #eff6ff; color: var(--primary);">🏥</div>
+                    <div>
+                        <span>SUPERIOR FACILITIES</span>
+                        <strong>{{ facility_winner or "Equal Facilities" }}</strong>
+                    </div>
+                </div>
+
+                <!-- Fee Winner -->
+                <div class="insight-card">
+                    <div class="insight-icon" style="background: #ecfdf5; color: var(--emerald);">💰</div>
+                    <div>
+                        <span>LOWER CONSULTATION COST</span>
+                        <strong>{{ fee_winner or "Similar Pricing" }}</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =====================================================
+             BASIC INFORMATION & AMENITIES MATRIX
+        ====================================================== -->
+        <section class="comparison-block">
+            <div style="margin-bottom: 24px;">
+                <span class="eyebrow">SPECIFICATION MATRIX</span>
+                <h2 style="font-size: 26px; color: var(--text-heading); margin: 4px 0;">Facilities &amp; Infrastructure Matrix</h2>
+                <p style="color: var(--text-muted); font-size: 14px; margin: 0;">Detailed verification of emergency readiness, ambulance network, and intensive care units.</p>
+            </div>
+
+            <div class="comparison-table-container">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 34%;">Feature / Parameter</th>
+                            <th style="width: 33%;">
+                                <div class="table-hospital-name">
+                                    <span>🏥</span> {{ hospital1.hospital_name }}
+                                </div>
+                            </th>
+                            <th style="width: 33%;">
+                                <div class="table-hospital-name">
+                                    <span>🏨</span> {{ hospital2.hospital_name }}
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>📍 City / Locality</td>
+                            <td><strong>{{ hospital1.city or "Not specified" }}</strong></td>
+                            <td><strong>{{ hospital2.city or "Not specified" }}</strong></td>
+                        </tr>
+                        <tr>
+                            <td>🏢 Institutional Category</td>
+                            <td>{{ hospital1.hospital_type or "General" }}</td>
+                            <td>{{ hospital2.hospital_type or "General" }}</td>
+                        </tr>
+                        <tr>
+                            <td>⭐ Overall Rating Score</td>
+                            <td><strong style="color: #b45309;">⭐ {{ hospital1.rating or "4.5" }} / 5.0</strong></td>
+                            <td><strong style="color: #b45309;">⭐ {{ hospital2.rating or "4.5" }} / 5.0</strong></td>
+                        </tr>
+                        <tr>
+                            <td>📞 Phone Contact</td>
+                            <td>{{ hospital1.phone or "Not listed" }}</td>
+                            <td>{{ hospital2.phone or "Not listed" }}</td>
+                        </tr>
+                        <tr>
+                            <td>🗺️ Address Details</td>
+                            <td><span style="font-size: 13px; color: var(--text-muted);">{{ hospital1.address or "Not specified" }}</span></td>
+                            <td><span style="font-size: 13px; color: var(--text-muted);">{{ hospital2.address or "Not specified" }}</span></td>
+                        </tr>
+                        <tr>
+                            <td>🚨 24/7 Emergency Care</td>
+                            <td>
+                                {% if hospital1.emergency %}
+                                    <span class="status available">✓ Available 24/7</span>
+                                {% else %}
+                                    <span class="status unavailable">✕ Not Available</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if hospital2.emergency %}
+                                    <span class="status available">✓ Available 24/7</span>
+                                {% else %}
+                                    <span class="status unavailable">✕ Not Available</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>🚑 Ambulance Fleet Support</td>
+                            <td>
+                                {% if hospital1.ambulance %}
+                                    <span class="status available">✓ Active Fleet</span>
+                                {% else %}
+                                    <span class="status unavailable">✕ Not Available</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if hospital2.ambulance %}
+                                    <span class="status available">✓ Active Fleet</span>
+                                {% else %}
+                                    <span class="status unavailable">✕ Not Available</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>🫀 Intensive Care Unit (ICU)</td>
+                            <td>
+                                {% if hospital1.icu %}
+                                    <span class="status available">✓ Dedicated ICU</span>
+                                {% else %}
+                                    <span class="status unavailable">✕ Not Available</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if hospital2.icu %}
+                                    <span class="status available">✓ Dedicated ICU</span>
+                                {% else %}
+                                    <span class="status unavailable">✕ Not Available</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+
+        <!-- =====================================================
+             TREATMENT SERVICE & COST COMPARISON
+        ====================================================== -->
+        <section class="comparison-block">
+            <div style="margin-bottom: 24px;">
+                <span class="eyebrow">TREATMENT PRICING</span>
+                <h2 style="font-size: 26px; color: var(--text-heading); margin: 4px 0;">Procedure &amp; Treatment Price Breakdown</h2>
+                <p style="color: var(--text-muted); font-size: 14px; margin: 0;">Compare listed medical procedures and diagnostics side-by-side.</p>
+            </div>
+
+            {% if services1 or services2 %}
+                <div class="comparison-table-container">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 34%;">Medical Treatment / Diagnostic</th>
+                                <th style="width: 33%;">{{ hospital1.hospital_name }}</th>
+                                <th style="width: 33%;">{{ hospital2.hospital_name }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% set service_names = [] %}
+                            {% for s in services1 %}
+                                {% if s.service_name not in service_names %}
+                                    {% set _ = service_names.append(s.service_name) %}
+                                {% endif %}
+                            {% endfor %}
+                            {% for s in services2 %}
+                                {% if s.service_name not in service_names %}
+                                    {% set _ = service_names.append(s.service_name) %}
+                                {% endif %}
+                            {% endfor %}
+
+                            {% for service_name in service_names %}
+                                <tr>
+                                    <td>
+                                        <strong style="color: var(--text-heading); font-size: 15px;">💊 {{ service_name }}</strong>
+                                    </td>
+
+                                    <!-- Hospital 1 Service Cost -->
+                                    <td>
+                                        {% set ns1 = namespace(found=false) %}
+                                        {% for s in services1 %}
+                                            {% if s.service_name == service_name %}
+                                                {% set ns1.found = true %}
+                                                <div style="color: var(--primary); font-size: 18px; font-weight: 900;">
+                                                    ₹{{ s.cost or 0 }}
+                                                </div>
+                                                {% if s.description %}
+                                                    <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">
+                                                        {{ s.description }}
+                                                    </div>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if not ns1.found %}
+                                            <span style="color: var(--text-light); font-style: italic; font-size: 13px;">Not Cataloged</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <!-- Hospital 2 Service Cost -->
+                                    <td>
+                                        {% set ns2 = namespace(found=false) %}
+                                        {% for s in services2 %}
+                                            {% if s.service_name == service_name %}
+                                                {% set ns2.found = true %}
+                                                <div style="color: var(--primary); font-size: 18px; font-weight: 900;">
+                                                    ₹{{ s.cost or 0 }}
+                                                </div>
+                                                {% if s.description %}
+                                                    <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">
+                                                        {{ s.description }}
+                                                    </div>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if not ns2.found %}
+                                            <span style="color: var(--text-light); font-style: italic; font-size: 13px;">Not Cataloged</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-modern" style="margin: 20px 0 40px;">
+                    <div>💊</div>
+                    <h3>No Treatment Pricing Records</h3>
+                    <p>Procedure cost records have not been uploaded for these hospitals yet.</p>
+                </div>
+            {% endif %}
+        </section>
+
+
+        <!-- =====================================================
+             DOCTOR TEAM COMPARISON
+        ====================================================== -->
+        {% if doctors1 or doctors2 %}
+            <section class="comparison-block">
+                <div style="margin-bottom: 24px;">
+                    <span class="eyebrow">SPECIALIST ROSTER</span>
+                    <h2 style="font-size: 26px; color: var(--text-heading); margin: 4px 0;">Specialist Doctors Head-to-Head</h2>
+                    <p style="color: var(--text-muted); font-size: 14px; margin: 0;">Compare on-duty medical specialists, qualifications, and consultation fees.</p>
+                </div>
+
+                <div class="explore-grid">
+                    <!-- Doctors 1 -->
+                    <div class="explore-card" style="flex-direction: column; align-items: stretch;">
+                        <div style="font-weight: 800; font-size: 16px; color: var(--primary); margin-bottom: 12px; border-bottom: 1.5px solid var(--border-subtle); padding-bottom: 10px;">
+                            🏥 {{ hospital1.hospital_name }} ({{ doctors1|length }} Doctors)
+                        </div>
+                        {% if doctors1 %}
+                            {% for d in doctors1 %}
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9;">
+                                    <div>
+                                        <strong style="color: var(--text-heading); font-size: 15px;">{{ d.doctor_name }}</strong>
+                                        <div style="font-size: 12.5px; color: var(--text-muted); margin-top: 2px;">{{ d.specialization }} • {{ d.experience or 1 }}+ yrs exp</div>
+                                    </div>
+                                    <span style="font-weight: 900; color: var(--emerald); font-size: 15px;">₹{{ d.consultation_fee or 0 }}</span>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p style="color: var(--text-muted); font-size: 13px; margin: 10px 0;">No doctor profiles listed.</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Doctors 2 -->
+                    <div class="explore-card" style="flex-direction: column; align-items: stretch;">
+                        <div style="font-weight: 800; font-size: 16px; color: var(--primary); margin-bottom: 12px; border-bottom: 1.5px solid var(--border-subtle); padding-bottom: 10px;">
+                            🏨 {{ hospital2.hospital_name }} ({{ doctors2|length }} Doctors)
+                        </div>
+                        {% if doctors2 %}
+                            {% for d in doctors2 %}
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9;">
+                                    <div>
+                                        <strong style="color: var(--text-heading); font-size: 15px;">{{ d.doctor_name }}</strong>
+                                        <div style="font-size: 12.5px; color: var(--text-muted); margin-top: 2px;">{{ d.specialization }} • {{ d.experience or 1 }}+ yrs exp</div>
+                                    </div>
+                                    <span style="font-weight: 900; color: var(--emerald); font-size: 15px;">₹{{ d.consultation_fee or 0 }}</span>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p style="color: var(--text-muted); font-size: 13px; margin: 10px 0;">No doctor profiles listed.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </section>
+        {% endif %}
+
+
+        <!-- =====================================================
+             ACTIONABLE PROFILES
+        ====================================================== -->
+        <section class="comparison-block">
+            <div style="margin-bottom: 24px;">
+                <span class="eyebrow">NEXT STEPS</span>
+                <h2 style="font-size: 26px; color: var(--text-heading); margin: 4px 0;">Explore Full Profiles or Book</h2>
+            </div>
+
+            <div class="explore-grid">
+                <div class="explore-card">
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div style="width: 48px; height: 48px; border-radius: 12px; background: var(--surface-soft); display: grid; place-items: center; font-size: 24px;">🏥</div>
+                        <div>
+                            <span style="font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase;">HOSPITAL 01</span>
+                            <h3>{{ hospital1.hospital_name }}</h3>
+                            <p>📍 {{ hospital1.city }}</p>
+                        </div>
+                    </div>
+                    <a href="/hospital/{{ hospital1.id }}" class="explore-button">
+                        View Hospital <span>→</span>
+                    </a>
+                </div>
+
+                <div class="explore-card">
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div style="width: 48px; height: 48px; border-radius: 12px; background: var(--surface-soft); display: grid; place-items: center; font-size: 24px;">🏨</div>
+                        <div>
+                            <span style="font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase;">HOSPITAL 02</span>
+                            <h3>{{ hospital2.hospital_name }}</h3>
+                            <p>📍 {{ hospital2.city }}</p>
+                        </div>
+                    </div>
+                    <a href="/hospital/{{ hospital2.id }}" class="explore-button">
+                        View Hospital <span>→</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    {% else %}
+
+        <!-- Empty Initial State: 3-Card Guide -->
+        <section class="service-transparency-grid">
+            <div class="transparency-card">
+                <div class="transparency-icon blue">⚡</div>
+                <h3>Battle Arena Comparison</h3>
+                <p>
+                    Select two hospitals above to compare quality ratings, ICU infrastructure, and emergency readiness in real time.
+                </p>
+            </div>
+
+            <div class="transparency-card">
+                <div class="transparency-icon teal">💰</div>
+                <h3>Consultation &amp; Surgery Fees</h3>
+                <p>
+                    Compare doctor fees and diagnostic procedure estimates side-by-side to choose the best value healthcare provider.
+                </p>
+            </div>
+
+            <div class="transparency-card">
+                <div class="transparency-icon green">👨‍⚕️</div>
+                <h3>Specialist Doctor Teams</h3>
+                <p>
+                    Review specialist rosters, experience levels, and qualifications practicing at each hospital.
+                </p>
+            </div>
+        </section>
+
+    {% endif %}
+
+
+    <!-- Back Link -->
+    <div class="compare-back">
+        <a href="/">
+            ← Return to Hospitals Directory
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

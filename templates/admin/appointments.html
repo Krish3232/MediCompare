@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Appointments — Admin Portal — MediCompare{% endblock %}
+
+{% block content %}
+
+<div class="admin-dashboard">
+
+    <!-- ================= HEADER ================= -->
+    <section class="admin-hero" style="background: linear-gradient(135deg, #09172e 0%, #1e40af 55%, #06b6d4 100%);">
+        <div>
+            <span class="eyebrow" style="color: #a5f3fc;">APPOINTMENT OVERSIGHT</span>
+            <h1>📅 Manage Patient Bookings</h1>
+            <p>Review incoming appointment requests, approve schedules, and track doctor consultation queues.</p>
+        </div>
+        <div class="admin-hero-icon">📋</div>
+    </section>
+
+    <!-- ================= STATUS TABS ================= -->
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px;">
+        <a
+            href="/admin/appointments"
+            class="btn {% if not status_filter %}btn-primary{% else %}btn-light{% endif %}"
+        >
+            📋 All Bookings
+        </a>
+
+        <a
+            href="/admin/appointments?status=Pending"
+            class="btn {% if status_filter == 'Pending' %}btn-primary{% else %}btn-light{% endif %}"
+            style="{% if status_filter == 'Pending' %}background: var(--amber); border-color: var(--amber);{% endif %}"
+        >
+            🟡 Pending ({{ appointment_counts["pending"] or 0 }})
+        </a>
+
+        <a
+            href="/admin/appointments?status=Approved"
+            class="btn {% if status_filter == 'Approved' %}btn-primary{% else %}btn-light{% endif %}"
+            style="{% if status_filter == 'Approved' %}background: var(--emerald); border-color: var(--emerald);{% endif %}"
+        >
+            🟢 Approved ({{ appointment_counts["approved"] or 0 }})
+        </a>
+
+        <a
+            href="/admin/appointments?status=Rejected"
+            class="btn {% if status_filter == 'Rejected' %}btn-primary{% else %}btn-light{% endif %}"
+            style="{% if status_filter == 'Rejected' %}background: var(--rose); border-color: var(--rose);{% endif %}"
+        >
+            🔴 Rejected ({{ appointment_counts["rejected"] or 0 }})
+        </a>
+
+        <a
+            href="/admin/appointments?status=Cancelled"
+            class="btn {% if status_filter == 'Cancelled' %}btn-primary{% else %}btn-light{% endif %}"
+        >
+            ⚫ Cancelled ({{ appointment_counts["cancelled"] or 0 }})
+        </a>
+    </div>
+
+    <!-- ================= METRIC SUMMARY HUD ================= -->
+    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 30px;">
+        <div class="hd-stat" style="padding: 16px;">
+            <div>
+                <span style="font-size: 11px; color: var(--text-muted); font-weight: 700;">TOTAL</span>
+                <strong style="font-size: 24px;">{{ appointment_counts["total"] or 0 }}</strong>
+            </div>
+        </div>
+        <div class="hd-stat" style="padding: 16px; border-color: #fde68a; background: #fffbeb;">
+            <div>
+                <span style="font-size: 11px; color: #92400e; font-weight: 700;">PENDING</span>
+                <strong style="font-size: 24px; color: #b45309;">{{ appointment_counts["pending"] or 0 }}</strong>
+            </div>
+        </div>
+        <div class="hd-stat" style="padding: 16px; border-color: #a7f3d0; background: #ecfdf5;">
+            <div>
+                <span style="font-size: 11px; color: #065f46; font-weight: 700;">APPROVED</span>
+                <strong style="font-size: 24px; color: #059669;">{{ appointment_counts["approved"] or 0 }}</strong>
+            </div>
+        </div>
+        <div class="hd-stat" style="padding: 16px; border-color: #fecaca; background: #fef2f2;">
+            <div>
+                <span style="font-size: 11px; color: #991b1b; font-weight: 700;">REJECTED</span>
+                <strong style="font-size: 24px; color: #dc2626;">{{ appointment_counts["rejected"] or 0 }}</strong>
+            </div>
+        </div>
+        <div class="hd-stat" style="padding: 16px;">
+            <div>
+                <span style="font-size: 11px; color: var(--text-muted); font-weight: 700;">CANCELLED</span>
+                <strong style="font-size: 24px; color: var(--text-muted);">{{ appointment_counts["cancelled"] or 0 }}</strong>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ================= APPOINTMENTS GRID ================= -->
+    {% if appointments %}
+        <div class="appointment-container">
+            {% for appointment in appointments %}
+                <article class="appointment-card" style="border-radius: var(--radius-lg);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                        <div>
+                            <span style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">PATIENT &amp; CLINIC</span>
+                            <h2>👤 {{ appointment.full_name }}</h2>
+                            <p style="color: var(--text-muted); font-size: 13px; margin: 2px 0 0;">
+                                🏥 {{ appointment.hospital_name }}
+                            </p>
+                        </div>
+
+                        <div>
+                            {% if appointment.status == "Approved" %}
+                                <span class="status-approved">🟢 Approved</span>
+                            {% elif appointment.status == "Rejected" %}
+                                <span class="status-rejected">🔴 Rejected</span>
+                            {% elif appointment.status == "Cancelled" %}
+                                <span class="status-cancelled">⚫ Cancelled</span>
+                            {% else %}
+                                <span class="status-pending">🟡 Pending</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div style="background: var(--surface-subtle); padding: 14px; border-radius: 12px; margin-bottom: 14px; font-size: 13px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                            <span><strong>Doctor:</strong> 👨‍⚕️ {{ appointment.doctor_name }}</span>
+                            <span style="color: var(--primary); font-weight: 700;">{{ appointment.specialization }}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span><strong>Date:</strong> 📅 {{ appointment.appointment_date }}</span>
+                            <span><strong>Time:</strong> 🕐 {{ appointment.appointment_time or 'Flexible' }}</span>
+                        </div>
+                    </div>
+
+                    {% if appointment.reason %}
+                        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px; background: #f8fafc; padding: 8px 12px; border-radius: 8px;">
+                            <strong>Reason:</strong> {{ appointment.reason }}
+                        </p>
+                    {% endif %}
+
+                    <!-- Action Buttons -->
+                    {% if appointment.status == "Pending" %}
+                        <div style="display: flex; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border-subtle);">
+                            <a
+                                href="/admin/approve/{{ appointment.id }}"
+                                class="btn btn-primary"
+                                style="flex: 1; background: var(--emerald); box-shadow: none; font-size: 13px;"
+                                onclick="return confirm('Approve this appointment?');"
+                            >
+                                ✓ Approve Booking
+                            </a>
+
+                            <a
+                                href="/admin/reject/{{ appointment.id }}"
+                                class="btn btn-danger"
+                                style="flex: 1; box-shadow: none; font-size: 13px;"
+                                onclick="return confirm('Reject this appointment?');"
+                            >
+                                ✕ Reject Booking
+                            </a>
+                        </div>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-modern">
+            <div>📅</div>
+            <h2>No Appointments Found</h2>
+            <p>No appointments match the current status filter.</p>
+            <a href="/admin/appointments" class="btn btn-primary">
+                View All Appointments <span>↻</span>
+            </a>
+        </div>
+    {% endif %}
+
+    <!-- Back Button -->
+    <div style="margin-top: 30px; text-align: center;">
+        <a href="/admin/dashboard" style="color: var(--primary); font-weight: 700; font-size: 14px;">
+            ← Back to Admin Dashboard
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

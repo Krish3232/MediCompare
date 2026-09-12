@@ -1,0 +1,37 @@
+{
+  "extends": [
+    "development"
+  ],
+  "hints": {
+    "axe/structure": [
+      "default",
+      {
+        "list": "off"
+      }
+    ],
+    "compat-api/css": [
+      "default",
+      {
+        "ignore": [
+          "backdrop-filter",
+          "min-height: auto",
+          "mask-image",
+          "user-select",
+          "user-select",
+          "-webkit-mask",
+          "-webkit-mask",
+          "-webkit-mask",
+          "-webkit-mask",
+          "-webkit-mask"
+        ]
+      }
+    ],
+    "no-inline-styles": "off"
+  },
+  "browserslist": [
+    "defaults",
+    "not ie 11",
+    "not and_ff <= 132",
+    "not firefox <= 135"
+  ]
+}

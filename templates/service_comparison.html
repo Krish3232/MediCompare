@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block title %}Treatment & Service Cost Comparison — MediCompare{% endblock %}
+
+{% block content %}
+
+<div class="service-page">
+
+    <!-- =====================================================
+         HERO SECTION
+    ====================================================== -->
+    <section class="service-hero">
+        <div class="service-hero-content">
+            <div class="service-eyebrow">
+                <span class="pulse-dot"></span> TREATMENT COST INTELLIGENCE
+            </div>
+
+            <h1>
+                Compare Treatment Costs
+                <br>
+                <span>With Absolute Transparency.</span>
+            </h1>
+
+            <p>
+                Eliminate healthcare pricing ambiguity. Compare certified procedure packages, surgical costs, and diagnostic fees across all top hospitals in your city.
+            </p>
+        </div>
+    </section>
+
+
+    <!-- =====================================================
+         STEP 1: SERVICE SEARCH CONSOLE
+     ====================================================== -->
+    <section class="service-search-section">
+        <form method="GET" action="/service-comparison" class="service-search-card">
+            <div class="service-search-icon">💊</div>
+
+            <div class="service-select-wrapper">
+                <label for="service">Select Medical Procedure / Service</label>
+                <select id="service" name="service" required>
+                    <option value="">Choose a treatment or diagnostic service...</option>
+                    {% for s in services %}
+                        <option
+                            value="{{ s.service_name }}"
+                            {% if selected_service == s.service_name %}selected{% endif %}
+                        >
+                            {{ s.service_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="service-compare-button">
+                Compare Prices <span>→</span>
+            </button>
+        </form>
+
+        <!-- Quick Search Pill Chips -->
+        <div class="service-quick-pills">
+            <span class="pill-title">Popular Procedures:</span>
+            {% for s in services[:6] %}
+                <a href="/service-comparison?service={{ s.service_name }}" class="service-pill-chip">
+                    <span>💊</span>
+                    <span>{{ s.service_name }}</span>
+                </a>
+            {% endfor %}
+        </div>
+    </section>
+
+
+    <!-- =====================================================
+         STEP 2: RESULTS SECTION
+    ====================================================== -->
+    {% if selected_service %}
+        {% if results %}
+            <section class="service-results-section">
+                <!-- Results Header HUD -->
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; border-bottom: 1.5px dashed var(--border-subtle); padding-bottom: 20px;">
+                    <div>
+                        <span class="eyebrow">PRICE COMPARISON REPORT</span>
+                        <h2 style="font-size: 28px; margin: 4px 0; color: var(--text-heading);">
+                            {{ selected_service }}
+                        </h2>
+                        <p style="color: var(--text-muted); font-size: 14px; margin: 0;">
+                            Benchmarked across <strong>{{ results|length }}</strong> verified healthcare provider{% if results|length != 1 %}s{% endif %}.
+                        </p>
+                    </div>
+
+                    <div style="text-align: right;">
+                        <span style="display: block; font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">LOWEST PRICE FOUND</span>
+                        {% set min_cost = results|map(attribute='cost')|min %}
+                        <strong style="font-size: 26px; font-weight: 900; color: var(--emerald);">
+                            ₹{{ min_cost or 0 }}
+                        </strong>
+                    </div>
+                </div>
+
+                <!-- Result Cards Grid -->
+                <div class="service-result-grid">
+                    {% for row in results %}
+                        <article class="service-result-card">
+                            {% if row.cost == min_cost %}
+                                <div style="position: absolute; top: 18px; right: 18px; background: #ecfdf5; color: #059669; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; border: 1px solid #a7f3d0;">
+                                    🏆 BEST VALUE
+                                </div>
+                            {% endif %}
+
+                            <div class="service-card-top">
+                                <div class="service-hospital-icon">🏥</div>
+                                <div class="service-hospital-info">
+                                    <h3>{{ row.hospital_name }}</h3>
+                                    <p>📍 {{ row.city or "Location unavailable" }}</p>
+                                </div>
+                            </div>
+
+                            <div class="service-card-divider"></div>
+
+                            <div style="margin-bottom: 14px;">
+                                <span style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">PACKAGE INCLUSIONS</span>
+                                <p style="font-size: 13.5px; color: var(--text-body); margin: 4px 0 0; line-height: 1.5;">
+                                    {{ row.description or "Comprehensive clinical package conducted under dedicated specialist supervision." }}
+                                </p>
+                            </div>
+
+                            <div class="service-card-bottom">
+                                <div class="service-cost-wrapper">
+                                    <span>ESTIMATED PACKAGE COST</span>
+                                    <strong>₹{{ row.cost or 0 }}</strong>
+                                </div>
+
+                                <a
+                                    href="/hospital/{{ row.hospital_id }}"
+                                    class="service-view-button"
+                                >
+                                    Hospital Details <span>→</span>
+                                </a>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+
+                <!-- Side-by-Side Table -->
+                <div class="service-table-wrapper">
+                    <div class="service-table-heading">
+                        <span class="eyebrow">TRANSPARENT BREAKDOWN</span>
+                        <h2 style="font-size: 20px; margin: 0; color: var(--text-heading);">Side-by-Side Pricing Catalogue</h2>
+                    </div>
+
+                    <div class="service-table-scroll">
+                        <table class="service-cost-table">
+                            <thead>
+                                <tr>
+                                    <th>Healthcare Provider</th>
+                                    <th>Location / City</th>
+                                    <th>Procedure</th>
+                                    <th>Description &amp; Inclusions</th>
+                                    <th>Estimated Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in results %}
+                                    <tr>
+                                        <td>
+                                            <a href="/hospital/{{ row.hospital_id }}" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+                                                <span style="font-size: 20px;">🏥</span>
+                                                <strong style="color: var(--primary); font-size: 15px;">{{ row.hospital_name }}</strong>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <span style="font-weight: 600; color: var(--text-body);">📍 {{ row.city or "General" }}</span>
+                                        </td>
+                                        <td>
+                                            <strong>{{ row.service_name }}</strong>
+                                        </td>
+                                        <td>
+                                            <span style="font-size: 13px; color: var(--text-muted); line-height: 1.4; display: block; max-width: 320px;">
+                                                {{ row.description or "Standard clinical procedure" }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <strong style="color: var(--primary); font-size: 18px; font-weight: 900;">
+                                                ₹{{ row.cost or 0 }}
+                                            </strong>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+        {% else %}
+
+            <!-- No Results for this service -->
+            <div class="empty-modern" style="margin: 40px 0;">
+                <div>🔎</div>
+                <h2>No Cost Data Available</h2>
+                <p>
+                    No hospitals have cataloged pricing records for <strong>{{ selected_service }}</strong> yet. Try selecting another procedure.
+                </p>
+                <a href="/service-comparison" class="btn-save-action" style="margin-top: 15px;">
+                    Choose Another Treatment <span>↻</span>
+                </a>
+            </div>
+
+        {% endif %}
+    {% else %}
+
+        <!-- Initial Start Section: 3-Card Intelligence Transparency Grid -->
+        <section class="service-transparency-grid">
+            <div class="transparency-card">
+                <div class="transparency-icon blue">📊</div>
+                <h3>100% Price Transparency</h3>
+                <p>
+                    Compare upfront hospital procedure costs so you never face hidden medical charges or surprise post-op bills.
+                </p>
+            </div>
+
+            <div class="transparency-card">
+                <div class="transparency-icon teal">🏥</div>
+                <h3>Cross-Facility Benchmarking</h3>
+                <p>
+                    Compare surgery, MRI, and diagnostics pricing across Private, Trust, and Multi-Speciality hospitals in your city.
+                </p>
+            </div>
+
+            <div class="transparency-card">
+                <div class="transparency-icon green">💡</div>
+                <h3>Informed Decisions</h3>
+                <p>
+                    Select the ideal healthcare provider matching your budget, clinical expectations, and insurance coverage.
+                </p>
+            </div>
+        </section>
+
+    {% endif %}
+
+    <!-- Back Link -->
+    <div class="service-back">
+        <a href="/">
+            ← Return to Hospitals Directory
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

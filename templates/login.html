@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Login — MediCompare{% endblock %}
+
+{% block content %}
+
+<div class="auth-page">
+    <div class="auth-container">
+
+        <!-- ================= HEADER ================= -->
+        <div class="auth-header">
+            <div class="auth-icon">
+                🔐
+            </div>
+            <h1>Welcome Back</h1>
+            <p>Access your MediCompare health dashboard &amp; bookings</p>
+        </div>
+
+        <!-- ================= FORM ================= -->
+        <form method="POST" action="{{ url_for('login') }}" class="auth-form">
+
+            <!-- Email -->
+            <div class="form-group">
+                <label for="email">
+                    📧 Email Address
+                </label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="name@example.com"
+                    required
+                    autocomplete="email"
+                >
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+                <label for="password">
+                    🔑 Password
+                </label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter your secret password"
+                    required
+                    autocomplete="current-password"
+                >
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="auth-btn">
+                🔐 Sign In to Account
+            </button>
+
+        </form>
+
+        <!-- Register Link -->
+        <div class="auth-footer">
+            <p>
+                Don't have an account?
+                <a href="{{ url_for('register') }}">
+                    Create free account <span>→</span>
+                </a>
+            </p>
+        </div>
+
+        <!-- Home Link -->
+        <div class="auth-home">
+            <a href="/">
+                ← Back to MediCompare Home
+            </a>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

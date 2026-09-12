@@ -1,0 +1,372 @@
+{% extends "base.html" %}
+
+{% block title %}
+MediCompare — Find & Compare Top Hospitals, Doctors & Costs
+{% endblock %}
+
+{% block content %}
+
+<!-- =====================================================
+     HERO SECTION
+====================================================== -->
+<section class="hero-modern">
+    <div class="hero-grid"></div>
+
+    <div class="hero-shell">
+        <div class="hero-copy">
+
+            <div class="hero-kicker">
+                <span class="pulse-dot"></span>
+                SMART HEALTHCARE INTELLIGENCE
+            </div>
+
+            <h1>
+                Compare hospitals.
+                <br>
+                <em>Choose with absolute confidence.</em>
+            </h1>
+
+            <p>
+                Discover verified hospitals, explore specialist doctors, compare treatment costs
+                transparently, and book appointments in seconds.
+            </p>
+
+            <!-- =========================
+                 ADVANCED SEARCH CONSOLE
+            ========================== -->
+            <form method="GET" action="/" class="search-panel">
+
+                <!-- Hospital Name -->
+                <div class="search-field">
+                    <span>🏥</span>
+                    <input
+                        type="text"
+                        name="search"
+                        placeholder="Search hospital or specialty..."
+                        value="{{ search or '' }}"
+                    >
+                </div>
+
+                <!-- City -->
+                <div class="search-field">
+                    <span>📍</span>
+                    <input
+                        type="text"
+                        name="city"
+                        placeholder="City or locality..."
+                        value="{{ city or '' }}"
+                    >
+                </div>
+
+                <!-- Hospital Type -->
+                <select name="hospital_type" title="Hospital type">
+                    <option value="">All Hospital Types</option>
+                    <option value="Multi-Speciality" {% if hospital_type == "Multi-Speciality" %}selected{% endif %}>Multi-Speciality</option>
+                    <option value="Private" {% if hospital_type == "Private" %}selected{% endif %}>Private</option>
+                    <option value="Government" {% if hospital_type == "Government" %}selected{% endif %}>Government</option>
+                    <option value="Charity" {% if hospital_type == "Charity" %}selected{% endif %}>Charity</option>
+                </select>
+
+                <!-- Rating -->
+                <select name="rating" title="Filter by rating">
+                    <option value="">Any Rating</option>
+                    <option value="4" {% if rating == "4" %}selected{% endif %}>⭐ 4.0+ Stars</option>
+                    <option value="4.5" {% if rating == "4.5" %}selected{% endif %}>⭐ 4.5+ Stars</option>
+                    <option value="5" {% if rating == "5" %}selected{% endif %}>⭐ 5.0 Stars</option>
+                </select>
+
+                <!-- Submit Button -->
+                <button class="btn btn-primary search-btn" type="submit">
+                    Search <span>→</span>
+                </button>
+            </form>
+
+            <!-- Quick Filter Chips -->
+            <div class="quick-links">
+                <span style="font-weight: 700; color: #cbd5e1;">Quick Filters:</span>
+                <a href="/?hospital_type=Private">🏢 Private</a>
+                <a href="/?hospital_type=Government">🏛️ Government</a>
+                <a href="/?hospital_type=Multi-Speciality">🏥 Multi-Speciality</a>
+                <a href="/?rating=4.5">⭐ Top Rated (4.5+)</a>
+                <a href="/?emergency=1">🚑 Emergency 24/7</a>
+            </div>
+
+        </div>
+
+        <!-- Hero Side Graphic & Live Stats HUD -->
+        <div class="hero-side">
+            <div class="hero-orb orb-one"></div>
+            <div class="hero-orb orb-two"></div>
+
+            <!-- Total Hospitals Available Card -->
+            <div class="hero-stat-card">
+                <div class="mini-icon">🏥</div>
+                <strong>{{ hospitals|length if hospitals else 0 }}+</strong>
+                <span>Verified Hospitals Listed</span>
+            </div>
+
+            <!-- Floating Smart Compare Badge -->
+            <div class="hero-float-card">
+                <span class="check">✓</span>
+                <div>
+                    <strong>AI Smart Match</strong>
+                    <small>Transparent pricing &amp; verified doctors</small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- =====================================================
+     TRUST & CAPABILITY STRIP
+====================================================== -->
+<section class="trust-strip">
+    <div>
+        <div class="trust-icon">🔍</div>
+        <div>
+            <strong>Smart Discovery</strong>
+            <span>Search by location, facility &amp; rating</span>
+        </div>
+    </div>
+
+    <div>
+        <div class="trust-icon">⚖️</div>
+        <div>
+            <strong>Cost Transparency</strong>
+            <span>Compare treatment fees side-by-side</span>
+        </div>
+    </div>
+
+    <div>
+        <div class="trust-icon">📅</div>
+        <div>
+            <strong>Instant Appointments</strong>
+            <span>Book directly with on-duty specialists</span>
+        </div>
+    </div>
+</section>
+
+
+<!-- =====================================================
+     WHY MEDICOMPARE / KEY FEATURES
+====================================================== -->
+<section class="home-section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">SMART ADVANTAGES</span>
+            <h2>
+                Everything you need,
+                <br>
+                <span>in one unified health hub.</span>
+            </h2>
+        </div>
+        <p>
+            MediCompare bridges the gap between patient care and clinical clarity, giving you instant comparative insights without switching websites.
+        </p>
+    </div>
+
+    <div class="feature-grid-new">
+        <!-- Feature 1 -->
+        <article class="feature-card-new">
+            <div class="feature-number">01</div>
+            <div class="feature-icon-new blue">🔎</div>
+            <h3>Intelligent Search</h3>
+            <p>
+                Filter hospitals by multi-speciality capabilities, locality, ratings, and 24/7 emergency readiness.
+            </p>
+        </article>
+
+        <!-- Feature 2 -->
+        <article class="feature-card-new">
+            <div class="feature-number">02</div>
+            <div class="feature-icon-new teal">⚖️</div>
+            <h3>Side-by-Side Compare</h3>
+            <p>
+                Evaluate facilities, ICU beds, ambulance networks, and doctor consultation fees side-by-side.
+            </p>
+        </article>
+
+        <!-- Feature 3 -->
+        <article class="feature-card-new">
+            <div class="feature-number">03</div>
+            <div class="feature-icon-new violet">👨‍⚕️</div>
+            <h3>Verified Specialists</h3>
+            <p>
+                Inspect doctor credentials, experience years, visiting hours, and consultation costs upfront.
+            </p>
+        </article>
+
+        <!-- Feature 4 -->
+        <article class="feature-card-new">
+            <div class="feature-number">04</div>
+            <div class="feature-icon-new orange">📅</div>
+            <h3>Seamless Booking</h3>
+            <p>
+                Select time slots based on real-time doctor availability with automated scheduling protection.
+            </p>
+        </article>
+    </div>
+</section>
+
+
+<!-- =====================================================
+     HOSPITAL EXPLORER SECTION
+====================================================== -->
+<section class="hospital-explorer" id="hospitals">
+    <div class="section-head compact">
+        <div>
+            <span class="eyebrow">HEALTHCARE DIRECTORY</span>
+            <h2>Available Hospitals</h2>
+        </div>
+
+        {% if hospitals %}
+            <span class="result-pill">
+                <span>🏥</span> {{ hospitals|length }} Hospital{% if hospitals|length != 1 %}s{% endif %} Found
+            </span>
+        {% endif %}
+    </div>
+
+    {% if hospitals %}
+        <div class="hospital-grid-new">
+            {% for hospital in hospitals %}
+                <article class="hospital-card-new">
+
+                    <!-- Hospital Image Banner -->
+                    <div class="hospital-card-image">
+                        {% if hospital['image'] %}
+                            <img
+                                src="{{ url_for('uploaded_file', filename=hospital['image']) }}"
+                                alt="{{ hospital['hospital_name'] }}"
+                                loading="lazy"
+                            >
+                        {% else %}
+                            <div class="hospital-image-placeholder">
+                                <span>🏥</span>
+                            </div>
+                        {% endif %}
+
+                        {% if hospital.hospital_type %}
+                            <span class="type-chip">
+                                {{ hospital.hospital_type }}
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Hospital Body Content -->
+                    <div class="hospital-card-body">
+
+                        <!-- Rating Line -->
+                        <div class="rating-line">
+                            <span class="rating-pill">
+                                ⭐ {{ hospital.rating or "Unrated" }}
+                            </span>
+                            <span style="font-size: 12px; color: var(--text-muted); font-weight: 600;">
+                                Verified Provider
+                            </span>
+                        </div>
+
+                        <!-- Hospital Name -->
+                        <h3>
+                            {{ hospital.hospital_name }}
+                        </h3>
+
+                        <!-- Location -->
+                        <p class="location-line">
+                            <span>📍</span> {{ hospital.city or "Location unavailable" }}
+                            {% if hospital.address %}
+                                <span style="color: var(--text-light); font-size: 12px;">• {{ hospital.address }}</span>
+                            {% endif %}
+                        </p>
+
+                        <!-- Facility Badges -->
+                        <div class="facility-row">
+                            {% if hospital.emergency %}
+                                <span class="fac-emergency">🚑 24/7 Emergency</span>
+                            {% endif %}
+
+                            {% if hospital.ambulance %}
+                                <span class="fac-ambulance">🚐 Ambulance</span>
+                            {% endif %}
+
+                            {% if hospital.icu %}
+                                <span class="fac-icu">🫀 ICU Active</span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Phone Contact -->
+                        {% if hospital.phone %}
+                            <p class="phone-line">
+                                <span>📞</span> {{ hospital.phone }}
+                            </p>
+                        {% endif %}
+
+                        <!-- Action Buttons -->
+                        <div class="card-actions">
+                            <a
+                                href="/hospital/{{ hospital.id }}"
+                                class="btn btn-primary"
+                            >
+                                View Details <span>→</span>
+                            </a>
+
+                            <a
+                                href="/compare?hospital1={{ hospital.id }}"
+                                class="btn btn-light"
+                                title="Compare this hospital"
+                            >
+                                ⚖️ Compare
+                            </a>
+                        </div>
+
+                    </div>
+
+                </article>
+            {% endfor %}
+        </div>
+
+    {% else %}
+
+        <!-- Empty Search Results State -->
+        <div class="empty-modern">
+            <div>🔎</div>
+            <h3>No Hospitals Found</h3>
+            <p>
+                We couldn't find any hospitals matching your current search criteria. Try modifying your search keywords or clearing the filters.
+            </p>
+            <a class="btn btn-primary" href="/">
+                Reset All Filters <span>↻</span>
+            </a>
+        </div>
+
+    {% endif %}
+</section>
+
+
+<!-- =====================================================
+     CALL TO ACTION BANNER
+====================================================== -->
+<section class="home-cta-new">
+    <div>
+        <span class="eyebrow light">EMPOWER YOUR HEALTHCARE</span>
+        <h2>
+            Your health. Your family.
+            <br>
+            <span>Your informed choice.</span>
+        </h2>
+        <p>
+            Compare treatment costs, evaluate doctor expertise, and schedule appointments with complete transparency today.
+        </p>
+        <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+            <a href="#hospitals" class="btn btn-white">
+                Explore Hospitals <span>↓</span>
+            </a>
+            <a href="/compare" class="btn btn-outline-white">
+                Open Comparison Arena <span>→</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

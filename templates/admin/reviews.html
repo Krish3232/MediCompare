@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Moderate Patient Reviews — Admin Portal — MediCompare{% endblock %}
+
+{% block content %}
+
+<div class="admin-dashboard">
+
+    <!-- ================= HEADER ================= -->
+    <section class="admin-hero" style="background: linear-gradient(135deg, #09172e 0%, #1e40af 55%, #7c3aed 100%);">
+        <div>
+            <span class="eyebrow" style="color: #c4b5fd;">CONTENT INTEGRITY SYSTEM</span>
+            <h1>💬 Patient Review Moderation</h1>
+            <p>Monitor patient testimonials, verify feedback authenticity, and remove fake or inappropriate reviews to maintain trust.</p>
+        </div>
+        <div class="admin-hero-icon">🛡️</div>
+    </section>
+
+    <!-- ================= TOOLBAR & FILTER ================= -->
+    <section class="admin-toolbar">
+        <div>
+            <span class="eyebrow">FEEDBACK DIRECTORY</span>
+            <h2>All Hospital Patient Reviews</h2>
+            <p>{{ reviews|length }} reviews currently published across hospitals.</p>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <!-- Hospital Filter Dropdown -->
+            <form method="GET" action="/admin/reviews" style="display: flex; gap: 8px; align-items: center;">
+                <select
+                    name="hospital_id"
+                    onchange="this.form.submit()"
+                    style="height: 42px; padding: 0 14px; border-radius: 10px; border: 1.5px solid var(--border-subtle); background: #ffffff; font-weight: 600; font-size: 13.5px; color: var(--text-heading); outline: none;"
+                >
+                    <option value="">🏥 All Hospitals ({{ total_reviews or 0 }})</option>
+                    {% for h in hospitals %}
+                        <option value="{{ h.id }}" {% if selected_hospital == h.id|string %}selected{% endif %}>
+                            {{ h.hospital_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                {% if selected_hospital %}
+                    <a href="/admin/reviews" class="btn btn-light" style="font-size: 13px; padding: 8px 12px;">
+                        ✕ Clear Filter
+                    </a>
+                {% endif %}
+            </form>
+
+            <a href="/admin/dashboard" class="btn btn-light" style="height: 42px; display: inline-flex; align-items: center;">
+                ← Dashboard
+            </a>
+        </div>
+    </section>
+
+    <!-- ================= REVIEWS TABLE ================= -->
+    {% if reviews %}
+        <section class="admin-table-card">
+            <div class="admin-table-wrapper">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Hospital</th>
+                            <th>Patient / Author</th>
+                            <th>Rating</th>
+                            <th>Review Comment</th>
+                            <th>Date Posted</th>
+                            <th style="text-align: right;">Moderation Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for review in reviews %}
+                            <tr>
+                                <!-- Hospital Name -->
+                                <td>
+                                    <div style="display: flex; flex-direction: column;">
+                                        <a href="/hospital/{{ review.hospital_id }}" target="_blank" style="color: var(--primary); font-weight: 700; font-size: 14px; text-decoration: none;">
+                                            🏥 {{ review.hospital_name }}
+                                        </a>
+                                        <span style="font-size: 12px; color: var(--text-muted);">
+                                            📍 {{ review.hospital_city or "Unknown location" }}
+                                        </span>
+                                    </div>
+                                </td>
+
+                                <!-- Author / User -->
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <div style="width: 32px; height: 32px; border-radius: 50%; background: #e0f2fe; color: var(--primary); display: grid; place-items: center; font-weight: 800; font-size: 13px;">
+                                            {{ review.user_name[0]|upper if review.user_name else 'P' }}
+                                        </div>
+                                        <div>
+                                            <strong style="font-size: 13.5px; color: var(--text-heading); display: block;">
+                                                {{ review.user_name or "Verified Patient" }}
+                                            </strong>
+                                            <span style="font-size: 11.5px; color: var(--text-muted);">
+                                                {{ review.user_email or "Account ID: #" ~ review.user_id }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <!-- Star Rating -->
+                                <td>
+                                    <span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 13px; background: #fffbeb; color: #b45309; border: 1px solid #fef3c7;">
+                                        ⭐ {{ review.rating }}/5
+                                    </span>
+                                </td>
+
+                                <!-- Comment -->
+                                <td style="max-width: 380px;">
+                                    <p style="font-size: 13.5px; line-height: 1.5; color: var(--text-body); margin: 0; word-break: break-word;">
+                                        &ldquo;{{ review.comment }}&rdquo;
+                                    </p>
+                                </td>
+
+                                <!-- Date -->
+                                <td>
+                                    <span style="font-size: 12.5px; color: var(--text-muted); font-weight: 600;">
+                                        📅 {{ review.review_date or "Recently" }}
+                                    </span>
+                                </td>
+
+                                <!-- Actions -->
+                                <td style="text-align: right;">
+                                    <div class="table-actions" style="justify-content: flex-end;">
+                                        <a
+                                            href="/admin/delete-review/{{ review.id }}"
+                                            class="table-btn delete"
+                                            onclick="return confirm('Delete this review by {{ review.user_name or 'patient' }}? The hospital rating will be recalculated.');"
+                                            title="Delete false or spam review"
+                                        >
+                                            🗑️ Delete Review
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    {% else %}
+        <div class="empty-modern">
+            <div>💬</div>
+            <h2>No Patient Reviews Found</h2>
+            <p>
+                {% if selected_hospital %}
+                    There are no reviews posted for this selected hospital yet.
+                {% else %}
+                    No patient reviews have been submitted to the platform yet.
+                {% endif %}
+            </p>
+            {% if selected_hospital %}
+                <a href="/admin/reviews" class="admin-primary-btn">
+                    View All Hospital Reviews
+                </a>
+            {% else %}
+                <a href="/admin/dashboard" class="admin-primary-btn">
+                    Return to Dashboard
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,554 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ hospital.hospital_name }} — MediCompare
+{% endblock %}
+
+{% block content %}
+
+<div class="hd-page">
+
+    <!-- =====================================================
+         BREADCRUMB
+    ====================================================== -->
+    <div class="hd-container hd-breadcrumb-wrap">
+        <div class="hd-breadcrumb">
+            <a href="/">Home</a>
+            <span>›</span>
+            <a href="/">Hospitals</a>
+            <span>›</span>
+            <span>{{ hospital.hospital_name }}</span>
+        </div>
+    </div>
+
+
+    <!-- =====================================================
+         HOSPITAL HERO
+    ====================================================== -->
+    <div class="hd-container">
+        <section class="hd-hero">
+
+            {% if hospital.image %}
+                <div class="hospital-details-image">
+                    <img
+                        src="{{ url_for('uploaded_file', filename=hospital.image) }}"
+                        alt="{{ hospital.hospital_name }}"
+                        class="hospital-detail-image"
+                    >
+                </div>
+            {% endif %}
+
+            <div class="hd-hero-inner">
+                <div>
+                    <div class="hd-eyebrow">
+                        <span class="pulse-dot"></span> Verified Healthcare Provider
+                    </div>
+
+                    <h1>
+                        {{ hospital.hospital_name }}
+                    </h1>
+
+                    <p class="hd-hero-description">
+                        Comprehensive clinical profile for {{ hospital.hospital_name }} located in {{ hospital.city or "your area" }}.
+                        Explore medical services, verified doctors on duty, transparent treatment costs, and verified patient reviews.
+                    </p>
+
+                    <div class="hd-meta">
+                        {% if hospital.city %}
+                            <span class="hd-meta-item">
+                                📍 {{ hospital.city }}
+                            </span>
+                        {% endif %}
+
+                        {% if hospital.hospital_type %}
+                            <span class="hd-meta-item">
+                                🏥 {{ hospital.hospital_type }}
+                            </span>
+                        {% endif %}
+
+                        <span class="hd-meta-item hd-rating">
+                            ⭐ {{ hospital.rating or "4.5" }} / 5.0
+                        </span>
+
+                        {% if hospital.emergency %}
+                            <span class="hd-meta-item" style="background: rgba(239, 68, 68, 0.25); border-color: rgba(239, 68, 68, 0.4); color: #fecaca;">
+                                🚑 24/7 Emergency Active
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="hd-hero-actions">
+                    {% if user_id or session.get('user_id') %}
+                        {% if is_favorite %}
+                            <a
+                                href="/remove-favorite/{{ hospital.id }}"
+                                class="hd-action hd-action-danger"
+                            >
+                                💔 Remove from Favorites
+                            </a>
+                        {% else %}
+                            <a
+                                href="/add-favorite/{{ hospital.id }}"
+                                class="hd-action hd-action-primary"
+                            >
+                                ❤️ Save to Favorites
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <a
+                            href="/login"
+                            class="hd-action hd-action-primary"
+                        >
+                            ❤️ Login to Save
+                        </a>
+                    {% endif %}
+
+                    <a
+                        href="/compare?hospital1={{ hospital.id }}"
+                        class="hd-action"
+                        style="background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25);"
+                    >
+                        ⚖️ Compare with Another
+                    </a>
+                </div>
+
+            </div>
+
+        </section>
+    </div>
+
+
+    <!-- =====================================================
+         QUICK STATS HUD
+    ====================================================== -->
+    <div class="hd-container">
+        <div class="hd-stats">
+
+            <div class="hd-stat">
+                <div class="hd-stat-icon">⭐</div>
+                <div>
+                    <strong>{{ hospital.rating or "4.5" }}</strong>
+                    <span>Quality Rating</span>
+                </div>
+            </div>
+
+            <div class="hd-stat">
+                <div class="hd-stat-icon">👨‍⚕️</div>
+                <div>
+                    <strong>{{ doctors|length }}</strong>
+                    <span>Doctors on Duty</span>
+                </div>
+            </div>
+
+            <div class="hd-stat">
+                <div class="hd-stat-icon">💊</div>
+                <div>
+                    <strong>{{ services|length if services else 0 }}</strong>
+                    <span>Treatments Listed</span>
+                </div>
+            </div>
+
+            <div class="hd-stat">
+                <div class="hd-stat-icon">🚑</div>
+                <div>
+                    <strong>{% if hospital.emergency %}24 / 7{% else %}Standard{% endif %}</strong>
+                    <span>Emergency Care</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- =====================================================
+         MAIN CONTENT SECTIONS
+    ====================================================== -->
+    <main class="hd-container">
+
+        <!-- =================================================
+             1. HOSPITAL INFORMATION
+        ================================================== -->
+        <section class="hd-section">
+            <div class="hd-section-heading">
+                <div class="hd-section-icon">🏥</div>
+                <div>
+                    <h2>Hospital Details &amp; Contact</h2>
+                    <p>Verified address, communication channels, and category.</p>
+                </div>
+            </div>
+
+            <div class="hd-info-grid">
+                <div class="hd-info-card">
+                    <div class="hd-info-icon">📍</div>
+                    <div>
+                        <span class="hd-info-label">Address</span>
+                        <span class="hd-info-value">{{ hospital.address or "Address not specified" }}</span>
+                    </div>
+                </div>
+
+                <div class="hd-info-card">
+                    <div class="hd-info-icon">📞</div>
+                    <div>
+                        <span class="hd-info-label">Phone Hotline</span>
+                        <span class="hd-info-value">{{ hospital.phone or "Direct contact not listed" }}</span>
+                    </div>
+                </div>
+
+                <div class="hd-info-card">
+                    <div class="hd-info-icon">🏢</div>
+                    <div>
+                        <span class="hd-info-label">Institution Type</span>
+                        <span class="hd-info-value">{{ hospital.hospital_type or "General Hospital" }}</span>
+                    </div>
+                </div>
+
+                <div class="hd-info-card">
+                    <div class="hd-info-icon">🏙️</div>
+                    <div>
+                        <span class="hd-info-label">City &amp; Region</span>
+                        <span class="hd-info-value">{{ hospital.city or "Region not specified" }}</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =================================================
+             2. DOCTORS & SPECIALISTS
+        ================================================== -->
+        <section class="hd-section">
+            <div class="hd-section-heading">
+                <div class="hd-section-icon">👨‍⚕️</div>
+                <div>
+                    <h2>Specialist Doctors</h2>
+                    <p>Consult with verified medical experts practicing at {{ hospital.hospital_name }}.</p>
+                </div>
+            </div>
+
+            {% if doctors %}
+                <div class="hd-doctor-grid">
+                    {% for doctor in doctors %}
+                        <article class="hd-doctor-card">
+                            <div class="hd-doctor-avatar">
+                                👨‍⚕️
+                            </div>
+
+                            <div class="hd-doctor-info">
+                                <h3>{{ doctor.doctor_name }}</h3>
+                                <span class="hd-specialization">{{ doctor.specialization }}</span>
+
+                                {% if doctor.qualification %}
+                                    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">
+                                        🎓 {{ doctor.qualification }}
+                                    </div>
+                                {% endif %}
+
+                                <div class="hd-doctor-details">
+                                    <div class="hd-doctor-detail">
+                                        <small>Experience</small>
+                                        <strong>{{ doctor.experience or 1 }}+ Years</strong>
+                                    </div>
+                                    <div class="hd-doctor-detail">
+                                        <small>Consultation Fee</small>
+                                        <strong>₹{{ doctor.consultation_fee or 0 }}</strong>
+                                    </div>
+                                </div>
+
+                                {% if doctor.available_days or doctor.available_time %}
+                                    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; background: #f8fafc; padding: 6px 10px; border-radius: 8px;">
+                                        ⏰ {{ doctor.available_days or 'Mon-Sat' }} • {{ doctor.available_time or 'Regular Hours' }}
+                                    </div>
+                                {% endif %}
+
+                                {% if user_id or session.get('user_id') %}
+                                    <a
+                                        href="/book-appointment/{{ hospital.id }}?doctor_id={{ doctor.id }}"
+                                        class="hd-book-btn"
+                                    >
+                                        📅 Book Appointment
+                                    </a>
+                                {% else %}
+                                    <a
+                                        href="/login"
+                                        class="hd-book-btn"
+                                    >
+                                        🔐 Login to Book
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="hd-empty">
+                    <div class="hd-empty-icon">👨‍⚕️</div>
+                    <h3>No Doctors Listed Yet</h3>
+                    <p>Doctor profiles for this hospital have not been registered yet.</p>
+                </div>
+            {% endif %}
+        </section>
+
+
+        <!-- =================================================
+             3. MEDICAL SERVICES & ESTIMATED COSTS
+        ================================================== -->
+        <section class="hd-section">
+            <div class="hd-section-heading">
+                <div class="hd-section-icon">💊</div>
+                <div>
+                    <h2>Medical Services &amp; Treatment Costs</h2>
+                    <p>Transparent fee estimations for procedures, tests, and clinical treatments.</p>
+                </div>
+            </div>
+
+            {% if services %}
+                <div class="hd-service-grid">
+                    {% for service in services %}
+                        <article class="hd-service-card">
+                            <div class="hd-service-icon">💊</div>
+                            <h3>{{ service.service_name }}</h3>
+                            <p>{{ service.description or "Standard medical procedure provided under clinical supervision." }}</p>
+
+                            <div class="hd-cost">
+                                <span>Estimated Fee</span>
+                                <strong>₹{{ service.cost or 0 }}</strong>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="hd-empty">
+                    <div class="hd-empty-icon">💊</div>
+                    <h3>No Services Listed Yet</h3>
+                    <p>Specific treatment costs have not been uploaded for this facility.</p>
+                </div>
+            {% endif %}
+        </section>
+
+
+        <!-- =================================================
+             4. HOSPITAL FACILITIES
+        ================================================== -->
+        <section class="hd-section">
+            <div class="hd-section-heading">
+                <div class="hd-section-icon">✨</div>
+                <div>
+                    <h2>Hospital Facilities &amp; Amenities</h2>
+                    <p>Critical infrastructure and medical readiness available on-site.</p>
+                </div>
+            </div>
+
+            <div class="hd-facility-grid">
+                <div class="hd-facility">
+                    <div class="hd-facility-icon">🚑</div>
+                    <div>
+                        <strong>24/7 Emergency Care</strong>
+                        <span>{% if hospital.emergency %}✅ Available 24/7{% else %}❌ Not Available{% endif %}</span>
+                    </div>
+                </div>
+
+                <div class="hd-facility">
+                    <div class="hd-facility-icon">🚐</div>
+                    <div>
+                        <strong>Ambulance Fleet</strong>
+                        <span>{% if hospital.ambulance %}✅ Active Ambulance Network{% else %}❌ Not Available{% endif %}</span>
+                    </div>
+                </div>
+
+                <div class="hd-facility">
+                    <div class="hd-facility-icon">🫀</div>
+                    <div>
+                        <strong>Intensive Care Unit (ICU)</strong>
+                        <span>{% if hospital.icu %}✅ Dedicated ICU Support{% else %}❌ Not Available{% endif %}</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =================================================
+             5. LOCATION & GPS DIRECTIONS
+        ================================================== -->
+        <section class="hd-section">
+            <div class="hd-section-heading">
+                <div class="hd-section-icon">📍</div>
+                <div>
+                    <h2>Hospital Location &amp; Directions</h2>
+                    <p>Find the fastest route to {{ hospital.hospital_name }}.</p>
+                </div>
+            </div>
+
+            <div class="hd-location-card">
+                <div class="hd-location-main">
+                    <div class="hd-location-icon">🏥</div>
+                    <div>
+                        <h3>{{ hospital.hospital_name }}</h3>
+                        <p>{{ hospital.address or "Address not specified" }}, {{ hospital.city or "" }}</p>
+                        <span>📍 GPS Location Ready</span>
+                    </div>
+                </div>
+
+                <div class="hd-location-actions">
+                    {% if map_url %}
+                        <a
+                            href="{{ map_url }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="hd-map-btn"
+                        >
+                            🗺️ Open Google Maps
+                        </a>
+                    {% endif %}
+
+                    <button
+                        type="button"
+                        class="hd-direction-btn"
+                        data-address="{{ hospital.address or '' }}"
+                        data-city="{{ hospital.city or '' }}"
+                        onclick="getDirections(this.dataset.address, this.dataset.city)"
+                    >
+                        🚗 Get GPS Directions
+                    </button>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =================================================
+             6. PATIENT REVIEWS
+        ================================================== -->
+        <section class="hd-section">
+            <div class="hd-section-heading">
+                <div class="hd-section-icon">💬</div>
+                <div>
+                    <h2>Patient Reviews &amp; Testimonials</h2>
+                    <p>Real experiences from patients who visited this hospital.</p>
+                </div>
+            </div>
+
+            {% if reviews %}
+                <div class="hd-review-grid">
+                    {% for review in reviews %}
+                        <article class="hd-review-card">
+                            <div class="hd-review-top">
+                                <div class="hd-review-user">
+                                    <div class="hd-review-avatar">
+                                        {{ review.full_name[0]|upper if review.full_name else 'P' }}
+                                    </div>
+                                    <div>
+                                        <h3>{{ review.full_name or 'Verified Patient' }}</h3>
+                                        <small>{{ review.review_date or 'Recent' }}</small>
+                                    </div>
+                                </div>
+
+                                <div class="hd-review-rating">
+                                    ⭐ {{ review.rating }}/5
+                                </div>
+                            </div>
+
+                            <p class="hd-review-comment">
+                                &ldquo;{{ review.comment }}&rdquo;
+                            </p>
+
+                            {% if is_admin %}
+                                <div class="hd-review-admin-bar">
+                                    <span class="admin-review-tag">⚡ Admin Moderation</span>
+                                    <a
+                                        href="/admin/delete-review/{{ review.id }}"
+                                        class="btn-delete-review"
+                                        onclick="return confirm('Are you sure you want to delete this review? The hospital rating will be recalculated immediately.');"
+                                        title="Delete false or spam review"
+                                    >
+                                        🗑️ Delete Review
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="hd-empty">
+                    <div class="hd-empty-icon">💬</div>
+                    <h3>No Reviews Yet</h3>
+                    <p>Be the first patient to share your feedback for this hospital.</p>
+                </div>
+            {% endif %}
+        </section>
+
+
+        <!-- =================================================
+             7. SUBMIT REVIEW FORM
+        ================================================== -->
+        {% if user_id or session.get('user_id') %}
+            <section class="hd-section">
+                <div class="hd-section-heading">
+                    <div class="hd-section-icon">✍️</div>
+                    <div>
+                        <h2>Write a Patient Review</h2>
+                        <p>Share your treatment experience to help others make informed healthcare decisions.</p>
+                    </div>
+                </div>
+
+                <form
+                    method="POST"
+                    action="/hospital/{{ hospital.id }}/review"
+                    class="hd-review-form"
+                >
+                    <div class="hd-form-grid">
+                        <div class="hd-form-group">
+                            <label for="rating">Rating (1 to 5 Stars)</label>
+                            <select id="rating" name="rating" required>
+                                <option value="">Select Star Rating</option>
+                                <option value="5">⭐⭐⭐⭐⭐ 5 - Outstanding</option>
+                                <option value="4">⭐⭐⭐⭐ 4 - Very Good</option>
+                                <option value="3">⭐⭐⭐ 3 - Satisfactory</option>
+                                <option value="2">⭐⭐ 2 - Needs Improvement</option>
+                                <option value="1">⭐ 1 - Poor</option>
+                            </select>
+                        </div>
+
+                        <div class="hd-form-group">
+                            <label for="comment">Your Detailed Review</label>
+                            <textarea
+                                id="comment"
+                                name="comment"
+                                rows="4"
+                                placeholder="Describe your experience with the hospital staff, doctor, facilities, and wait times..."
+                                required
+                            ></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="hd-review-submit">
+                        ✨ Submit Review
+                    </button>
+                </form>
+            </section>
+        {% else %}
+            <section class="hd-section">
+                <div class="hd-login-review">
+                    <div>
+                        <h3>Have you visited {{ hospital.hospital_name }}?</h3>
+                        <p>Sign in to your MediCompare account to submit a review and rate the doctors.</p>
+                    </div>
+                    <a href="/login">
+                        🔐 Login to Review
+                    </a>
+                </div>
+            </section>
+        {% endif %}
+
+
+        <!-- Back Link -->
+        <div class="hd-back">
+            <a href="/">
+                ← Back to Hospital Directory
+            </a>
+        </div>
+
+    </main>
+
+</div>
+
+{% endblock %}

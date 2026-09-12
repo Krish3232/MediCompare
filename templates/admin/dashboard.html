@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Command Center — MediCompare{% endblock %}
+
+{% block content %}
+
+<div class="admin-dashboard">
+
+    <!-- ================= ADMIN HERO ================= -->
+    <section class="admin-hero">
+        <div class="admin-hero-content">
+            <span class="eyebrow" style="color: #a5f3fc;">MEDICOMPARE CONTROL SYSTEM</span>
+            <h1>⚡ Admin Command Center</h1>
+            <p>
+                Real-time operational overview of registered hospitals, verified specialists, services, and appointment bookings.
+            </p>
+        </div>
+        <div class="admin-hero-icon">⚙️</div>
+    </section>
+
+
+    <!-- ================= ADMIN STATISTICS GRID ================= -->
+    <section class="admin-stats">
+
+        <!-- Total Hospitals -->
+        <a href="/admin/hospitals" class="admin-stat-card">
+            <div class="admin-stat-top">
+                <div class="admin-stat-icon purple">🏥</div>
+                <span class="stat-arrow">↗</span>
+            </div>
+            <span class="stat-label">Hospitals Listed</span>
+            <strong>{{ total_hospitals or 0 }}</strong>
+            <span class="stat-link">Manage hospitals →</span>
+        </a>
+
+        <!-- Total Doctors -->
+        <a href="/admin/doctors" class="admin-stat-card">
+            <div class="admin-stat-top">
+                <div class="admin-stat-icon cyan">👨‍⚕️</div>
+                <span class="stat-arrow">↗</span>
+            </div>
+            <span class="stat-label">Verified Doctors</span>
+            <strong>{{ total_doctors or 0 }}</strong>
+            <span class="stat-link">Manage doctors →</span>
+        </a>
+
+        <!-- Registered Users -->
+        <a href="/admin/users" class="admin-stat-card">
+            <div class="admin-stat-top">
+                <div class="admin-stat-icon green">👥</div>
+                <span class="stat-arrow">↗</span>
+            </div>
+            <span class="stat-label">Active Users</span>
+            <strong>{{ total_users or 0 }}</strong>
+            <span class="stat-link">View accounts →</span>
+        </a>
+
+        <!-- Total Appointments -->
+        <a href="/admin/appointments" class="admin-stat-card">
+            <div class="admin-stat-top">
+                <div class="admin-stat-icon blue">📅</div>
+                <span class="stat-arrow">↗</span>
+            </div>
+            <span class="stat-label">Total Bookings</span>
+            <strong>{{ total_appointments or 0 }}</strong>
+            <span class="stat-link">All bookings →</span>
+        </a>
+
+        <!-- Pending Appointments -->
+        <a href="/admin/appointments?status=Pending" class="admin-stat-card" style="border-top: 3px solid var(--amber);">
+            <div class="admin-stat-top">
+                <div class="admin-stat-icon orange">⏳</div>
+                <span class="stat-arrow">↗</span>
+            </div>
+            <span class="stat-label">Pending Approval</span>
+            <strong style="color: var(--amber);">{{ pending or 0 }}</strong>
+            <span class="stat-link" style="color: var(--amber);">Review pending →</span>
+        </a>
+
+        <!-- Approved Appointments -->
+        <a href="/admin/appointments?status=Approved" class="admin-stat-card" style="border-top: 3px solid var(--emerald);">
+            <div class="admin-stat-top">
+                <div class="admin-stat-icon green">✓</div>
+                <span class="stat-arrow">↗</span>
+            </div>
+            <span class="stat-label">Approved Appointments</span>
+            <strong style="color: var(--emerald);">{{ approved or 0 }}</strong>
+            <span class="stat-link" style="color: var(--emerald);">View confirmed →</span>
+        </a>
+
+        <!-- Rejected Appointments -->
+        <a href="/admin/appointments?status=Rejected" class="admin-stat-card" style="border-top: 3px solid var(--rose);">
+            <div class="admin-stat-top">
+                <div class="admin-stat-icon red">✕</div>
+                <span class="stat-arrow">↗</span>
+            </div>
+            <span class="stat-label">Rejected Bookings</span>
+            <strong style="color: var(--rose);">{{ rejected or 0 }}</strong>
+            <span class="stat-link" style="color: var(--rose);">View rejected →</span>
+        </a>
+
+        <!-- Total Services / Procedures -->
+        <a href="/admin/services" class="admin-stat-card">
+            <div class="admin-stat-top">
+                <div class="admin-stat-icon orange">💊</div>
+                <span class="stat-arrow">↗</span>
+            </div>
+            <span class="stat-label">Listed Procedures</span>
+            <strong>{{ total_services or 0 }}</strong>
+            <span class="stat-link">Manage services →</span>
+        </a>
+
+        <!-- Total Patient Reviews -->
+        <a href="/admin/reviews" class="admin-stat-card" style="border-top: 3px solid #8b5cf6;">
+            <div class="admin-stat-top">
+                <div class="admin-stat-icon purple">💬</div>
+                <span class="stat-arrow">↗</span>
+            </div>
+            <span class="stat-label">Patient Reviews</span>
+            <strong style="color: #8b5cf6;">{{ total_reviews or 0 }}</strong>
+            <span class="stat-link" style="color: #8b5cf6;">Moderate reviews →</span>
+        </a>
+
+    </section>
+
+
+    <!-- ================= QUICK ACTIONS ================= -->
+    <section class="admin-actions">
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow">PORTAL CONTROLS</span>
+                <h2>Quick Management Tools</h2>
+            </div>
+            <p>Direct shortcuts to create records and manage system entities.</p>
+        </div>
+
+        <div class="admin-action-grid">
+
+            <!-- Add Hospital -->
+            <a href="/admin/add-hospital" class="admin-action-card">
+                <div class="action-icon purple">🏥</div>
+                <div class="action-content">
+                    <strong>Add Hospital</strong>
+                    <span>Register a new clinic or hospital</span>
+                </div>
+                <b>→</b>
+            </a>
+
+            <!-- Add Doctor -->
+            <a href="/admin/add-doctor" class="admin-action-card">
+                <div class="action-icon cyan">👨‍⚕️</div>
+                <div class="action-content">
+                    <strong>Add Doctor</strong>
+                    <span>Assign doctors with visiting hours</span>
+                </div>
+                <b>→</b>
+            </a>
+
+            <!-- Add Service -->
+            <a href="/admin/add-service" class="admin-action-card">
+                <div class="action-icon orange">💊</div>
+                <div class="action-content">
+                    <strong>Add Service / Cost</strong>
+                    <span>Publish procedure fee estimations</span>
+                </div>
+                <b>→</b>
+            </a>
+
+            <!-- Manage Appointments -->
+            <a href="/admin/appointments" class="admin-action-card">
+                <div class="action-icon blue">📅</div>
+                <div class="action-content">
+                    <strong>Manage Bookings</strong>
+                    <span>Approve or reject appointments</span>
+                </div>
+                <b>→</b>
+            </a>
+
+            <!-- Manage Hospitals -->
+            <a href="/admin/hospitals" class="admin-action-card">
+                <div class="action-icon green">🏢</div>
+                <div class="action-content">
+                    <strong>Manage Hospitals</strong>
+                    <span>Edit or remove hospital records</span>
+                </div>
+                <b>→</b>
+            </a>
+
+            <!-- Manage Doctors -->
+            <a href="/admin/doctors" class="admin-action-card">
+                <div class="action-icon pink">🩺</div>
+                <div class="action-content">
+                    <strong>Manage Doctors</strong>
+                    <span>Update fees, schedules and specialties</span>
+                </div>
+                <b>→</b>
+            </a>
+
+            <!-- Manage Services -->
+            <a href="/admin/services" class="admin-action-card">
+                <div class="action-icon orange">💰</div>
+                <div class="action-content">
+                    <strong>Manage Services</strong>
+                    <span>Review all hospital pricing data</span>
+                </div>
+                <b>→</b>
+            </a>
+
+            <!-- Manage Users -->
+            <a href="/admin/users" class="admin-action-card">
+                <div class="action-icon teal">👥</div>
+                <div class="action-content">
+                    <strong>Manage Users</strong>
+                    <span>View registered patient accounts</span>
+                </div>
+                <b>→</b>
+            </a>
+
+            <!-- Moderate Reviews -->
+            <a href="/admin/reviews" class="admin-action-card">
+                <div class="action-icon pink">💬</div>
+                <div class="action-content">
+                    <strong>Moderate Reviews</strong>
+                    <span>Delete false or spam patient reviews</span>
+                </div>
+                <b>→</b>
+            </a>
+
+        </div>
+    </section>
+
+</div>
+
+{% endblock %}

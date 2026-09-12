@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Doctor — Admin Portal — MediCompare{% endblock %}
+
+{% block content %}
+
+<div class="admin-dashboard" style="max-width: 860px; margin: 0 auto;">
+
+    <!-- ================= HEADER ================= -->
+    <section class="admin-hero" style="background: linear-gradient(135deg, #09172e 0%, #1e40af 55%, #06b6d4 100%);">
+        <div>
+            <span class="eyebrow" style="color: #a5f3fc;">DOCTOR MANAGEMENT</span>
+            <h1>✏️ Edit Doctor Profile</h1>
+            <p>Update clinical credentials, consultation fees, and visiting hours for {{ doctor.doctor_name }}.</p>
+        </div>
+        <div class="admin-hero-icon">👨‍⚕️</div>
+    </section>
+
+    <!-- ================= FLASH MESSAGES ================= -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- ================= FORM CARD ================= -->
+    <div class="details-card">
+        <form method="POST" action="{{ url_for('edit_doctor', id=doctor.id) }}" class="admin-form">
+
+            <!-- Section 1: Basic & Hospital Details -->
+            <div class="form-section-divider" style="margin-top: 0;">
+                <span class="icon">🏥</span>
+                <div>
+                    <h3>Hospital &amp; Identity</h3>
+                </div>
+            </div>
+
+            <div class="form-grid-2">
+                <!-- Assigned Hospital -->
+                <div class="form-group">
+                    <label for="hospital_id">
+                        🏥 Assigned Hospital <span class="req">*</span>
+                    </label>
+                    <select id="hospital_id" name="hospital_id" required>
+                        <option value="">Choose Hospital...</option>
+                        {% for hospital in hospitals %}
+                            <option
+                                value="{{ hospital.id }}"
+                                {% if hospital.id == doctor.hospital_id %}selected{% endif %}
+                            >
+                                {{ hospital.hospital_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Doctor Name -->
+                <div class="form-group">
+                    <label for="doctor_name">
+                        👨‍⚕️ Doctor Full Name <span class="req">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="doctor_name"
+                        name="doctor_name"
+                        value="{{ doctor.doctor_name or '' }}"
+                        placeholder="e.g. Dr. Yash Sharma"
+                        required
+                    >
+                </div>
+            </div>
+
+            <!-- Section 2: Clinical Specialty & Experience -->
+            <div class="form-section-divider">
+                <span class="icon">🩺</span>
+                <div>
+                    <h3>Specialization &amp; Pricing</h3>
+                </div>
+            </div>
+
+            <div class="form-grid-2">
+                <!-- Specialization -->
+                <div class="form-group">
+                    <label for="specialization">
+                        🩺 Medical Specialty <span class="req">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="specialization"
+                        name="specialization"
+                        value="{{ doctor.specialization or '' }}"
+                        placeholder="e.g. Cardiologist, Neurologist"
+                        required
+                    >
+                </div>
+
+                <!-- Qualification -->
+                <div class="form-group">
+                    <label for="qualification">
+                        🎓 Qualification Degrees
+                    </label>
+                    <input
+                        type="text"
+                        id="qualification"
+                        name="qualification"
+                        value="{{ doctor.qualification or '' }}"
+                        placeholder="e.g. MBBS, MD, DM (Cardio)"
+                    >
+                </div>
+            </div>
+
+            <div class="form-grid-2">
+                <!-- Experience -->
+                <div class="form-group">
+                    <label for="experience">
+                        ⏳ Clinical Experience (Years)
+                    </label>
+                    <input
+                        type="number"
+                        id="experience"
+                        name="experience"
+                        min="0"
+                        value="{{ doctor.experience or 0 }}"
+                        placeholder="e.g. 8"
+                    >
+                </div>
+
+                <!-- Consultation Fee -->
+                <div class="form-group">
+                    <label for="consultation_fee">
+                        💰 Consultation Fee (₹)
+                    </label>
+                    <input
+                        type="number"
+                        id="consultation_fee"
+                        name="consultation_fee"
+                        min="0"
+                        step="0.01"
+                        value="{{ doctor.consultation_fee or 0 }}"
+                        placeholder="e.g. 800"
+                    >
+                </div>
+            </div>
+
+            <!-- Section 3: Availability & Timings -->
+            <div class="form-section-divider">
+                <span class="icon">📅</span>
+                <div>
+                    <h3>Visiting Schedule &amp; Timetable</h3>
+                </div>
+            </div>
+
+            <!-- Available Days -->
+            <div class="form-group">
+                <label>📅 Available Days</label>
+                <small style="margin-bottom: 10px; margin-top: 0;">
+                    Select all days on which the doctor is available at the clinic:
+                </small>
+
+                {% set saved_days = doctor.available_days or '' %}
+
+                <div class="days-selection-grid">
+                    {% for day in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %}
+                        <label class="day-pill-label">
+                            <input
+                                type="checkbox"
+                                name="available_days"
+                                value="{{ day }}"
+                                {% if day in saved_days %}checked{% endif %}
+                            >
+                            <span>{{ day }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Available Time -->
+            <div class="form-group" style="margin-top: 10px;">
+                <label for="available_time">🕐 Consultation Timing Window</label>
+                <input
+                    type="text"
+                    id="available_time"
+                    name="available_time"
+                    value="{{ doctor.available_time or '' }}"
+                    placeholder="e.g. 9:00 AM to 6:00 PM"
+                >
+                <small>
+                    Use standard format like <strong>9:00 AM to 6:00 PM</strong> for automated 30-minute booking slot generation.
+                </small>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="admin-form-actions">
+                <button type="submit" class="btn-save-action">
+                    💾 Save Changes
+                </button>
+                <a href="/admin/doctors" class="btn-cancel-action">
+                    Cancel
+                </a>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Back Link -->
+    <div style="text-align: center; margin-bottom: 40px;">
+        <a href="/admin/doctors" style="color: var(--primary); font-weight: 700; font-size: 14px; text-decoration: none;">
+            ← Return to Doctor Directory
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

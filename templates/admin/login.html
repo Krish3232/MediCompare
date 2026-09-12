@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Portal Login — MediCompare{% endblock %}
+
+{% block content %}
+
+<div class="auth-page">
+    <div class="auth-container" style="border-top: 4px solid var(--violet);">
+
+        <!-- ================= HEADER ================= -->
+        <div class="auth-header">
+            <div class="auth-icon" style="background: #f5f3ff; color: var(--violet); box-shadow: 0 8px 20px rgba(139, 92, 246, 0.2);">
+                ⚡
+            </div>
+            <h1>Admin Command Center</h1>
+            <p>Enter administrator credentials to manage MediCompare</p>
+        </div>
+
+        <!-- ================= LOGIN FORM ================= -->
+        <form method="POST" action="/admin/login" class="auth-form">
+
+            <!-- Email -->
+            <div class="form-group">
+                <label for="admin_email">
+                    📧 Administrator Email
+                </label>
+                <input
+                    type="email"
+                    id="admin_email"
+                    name="email"
+                    placeholder="admin@gmail.com"
+                    required
+                    autocomplete="email"
+                >
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+                <label for="admin_password">
+                    🔑 Security Key / Password
+                </label>
+                <input
+                    type="password"
+                    id="admin_password"
+                    name="password"
+                    placeholder="Enter admin password"
+                    required
+                    autocomplete="current-password"
+                >
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="auth-btn" style="background: linear-gradient(135deg, var(--violet) 0%, #4338ca 100%);">
+                ⚡ Authenticate &amp; Access Dashboard
+            </button>
+
+        </form>
+
+        <!-- Home Link -->
+        <div class="auth-home" style="margin-top: 24px;">
+            <a href="/">
+                ← Return to Patient Portal
+            </a>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

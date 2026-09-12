@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Doctors — Admin Portal — MediCompare{% endblock %}
+
+{% block content %}
+
+<div class="admin-dashboard">
+
+    <!-- ================= HEADER ================= -->
+    <section class="admin-hero" style="background: linear-gradient(135deg, #09172e 0%, #1e40af 55%, #06b6d4 100%);">
+        <div>
+            <span class="eyebrow" style="color: #a5f3fc;">CLINICAL DIRECTORY</span>
+            <h1>👨‍⚕️ Manage Medical Specialists</h1>
+            <p>Register, update credentials, set visiting hours, and manage specialist fees.</p>
+        </div>
+        <div class="admin-hero-icon">🩺</div>
+    </section>
+
+    <!-- ================= TOOLBAR ================= -->
+    <section class="admin-toolbar">
+        <div>
+            <span class="eyebrow">DOCTOR ROSTER</span>
+            <h2>Specialist Directory</h2>
+            <p>{{ doctors|length }} registered doctor profiles in the database.</p>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+            <a href="/admin/add-doctor" class="admin-primary-btn">
+                ＋ Add New Doctor
+            </a>
+            <a href="/admin/dashboard" class="btn btn-light">
+                ← Dashboard
+            </a>
+        </div>
+    </section>
+
+    <!-- ================= DOCTORS TABLE ================= -->
+    {% if doctors %}
+        <section class="admin-table-card">
+            <div class="admin-table-wrapper">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Doctor</th>
+                            <th>Hospital</th>
+                            <th>Specialization</th>
+                            <th>Experience</th>
+                            <th>Fee</th>
+                            <th>Visiting Schedule</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for doctor in doctors %}
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <div style="width: 40px; height: 40px; border-radius: 12px; background: #e0f2fe; color: var(--primary); display: grid; place-items: center; font-size: 18px; font-weight: 800;">
+                                            👨‍⚕️
+                                        </div>
+                                        <div>
+                                            <strong style="color: var(--text-heading); font-size: 15px;">{{ doctor.doctor_name }}</strong>
+                                            <div style="font-size: 11px; color: var(--text-muted);">{{ doctor.qualification or 'Certified' }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <strong>🏥 {{ doctor.hospital_name }}</strong>
+                                </td>
+                                <td>
+                                    <span style="display: inline-block; background: #eff6ff; color: var(--primary); font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 8px;">
+                                        {{ doctor.specialization }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <strong>{{ doctor.experience or 0 }} yrs</strong>
+                                </td>
+                                <td>
+                                    <strong style="color: var(--emerald); font-size: 15px;">₹{{ doctor.consultation_fee or 0 }}</strong>
+                                </td>
+                                <td>
+                                    <div style="font-size: 13px;">📅 {{ doctor.available_days or "All days" }}</div>
+                                    <div style="font-size: 12px; color: var(--text-muted);">⏰ {{ doctor.available_time or "Standard hours" }}</div>
+                                </td>
+                                <td>
+                                    <div class="table-actions">
+                                        <a href="{{ url_for('edit_doctor', id=doctor.id) }}" class="table-btn edit">
+                                            ✏️ Edit
+                                        </a>
+                                        <a
+                                            href="{{ url_for('delete_doctor', id=doctor.id) }}"
+                                            class="table-btn delete"
+                                            onclick="return confirm('Are you sure you want to delete this doctor?');"
+                                        >
+                                            🗑️ Delete
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    {% else %}
+        <div class="empty-modern">
+            <div>👨‍⚕️</div>
+            <h2>No Doctors Registered</h2>
+            <p>No specialist doctor records found in the database. Add your first doctor now.</p>
+            <a href="/admin/add-doctor" class="admin-primary-btn">
+                ＋ Add First Doctor
+            </a>
+        </div>
+    {% endif %}
+
+    <!-- Back Button -->
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="/admin/dashboard" style="color: var(--primary); font-weight: 700; font-size: 14px;">
+            ← Back to Admin Dashboard
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

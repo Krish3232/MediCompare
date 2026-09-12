@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+
+{% block title %}Add Hospital — Admin Portal — MediCompare{% endblock %}
+
+{% block content %}
+
+<div class="admin-dashboard" style="max-width: 900px; margin: 0 auto;">
+
+    <!-- ================= HEADER ================= -->
+    <section class="admin-hero" style="background: linear-gradient(135deg, #09172e 0%, #1e40af 55%, #06b6d4 100%);">
+        <div>
+            <span class="eyebrow" style="color: #a5f3fc;">HOSPITAL ONBOARDING</span>
+            <h1>➕ Add New Hospital</h1>
+            <p>Register a healthcare institution with facilities, location, and contact information.</p>
+        </div>
+        <div class="admin-hero-icon">🏥</div>
+    </section>
+
+    <!-- ================= FLASH MESSAGES ================= -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- ================= FORM CARD ================= -->
+    <div class="details-card">
+        <form
+            method="POST"
+            action="{{ url_for('add_hospital') }}"
+            enctype="multipart/form-data"
+            class="admin-form"
+        >
+
+            <!-- Section 1: General Info -->
+            <div class="form-section-divider" style="margin-top: 0;">
+                <span class="icon">🏥</span>
+                <div>
+                    <h3>Hospital Information</h3>
+                </div>
+            </div>
+
+            <div class="form-grid-2">
+                <!-- Hospital Name -->
+                <div class="form-group">
+                    <label for="hospital_name">
+                        🏥 Hospital Name <span class="req">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="hospital_name"
+                        name="hospital_name"
+                        placeholder="e.g. Apollo Spectra Hospital"
+                        required
+                    >
+                </div>
+
+                <!-- Hospital Type -->
+                <div class="form-group">
+                    <label for="hospital_type">
+                        🏢 Hospital Type <span class="req">*</span>
+                    </label>
+                    <select id="hospital_type" name="hospital_type" required>
+                        <option value="">Select hospital type...</option>
+                        <option value="Multi-Speciality">Multi-Speciality</option>
+                        <option value="Private">Private</option>
+                        <option value="Government">Government</option>
+                        <option value="Trust">Trust</option>
+                        <option value="Speciality">Speciality</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Section 2: Location & Contact -->
+            <div class="form-section-divider">
+                <span class="icon">📍</span>
+                <div>
+                    <h3>Location &amp; Contact</h3>
+                </div>
+            </div>
+
+            <div class="form-grid-2">
+                <!-- City -->
+                <div class="form-group">
+                    <label for="city">
+                        📍 City / Region <span class="req">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="city"
+                        name="city"
+                        placeholder="e.g. Mumbai, Tardeo"
+                        required
+                    >
+                </div>
+
+                <!-- Phone -->
+                <div class="form-group">
+                    <label for="phone">
+                        📞 Phone Contact
+                    </label>
+                    <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        placeholder="e.g. +91 22 4332 4500"
+                    >
+                </div>
+            </div>
+
+            <!-- Full Address -->
+            <div class="form-group">
+                <label for="address">
+                    📍 Full Street Address <span class="req">*</span>
+                </label>
+                <textarea
+                    id="address"
+                    name="address"
+                    rows="3"
+                    placeholder="Enter full street address, landmark, and postal code..."
+                    required
+                ></textarea>
+            </div>
+
+            <!-- Map Link -->
+            <div class="form-group">
+                <label for="map_link">
+                    🗺️ Google Maps Location URL
+                </label>
+                <input
+                    type="url"
+                    id="map_link"
+                    name="map_link"
+                    placeholder="https://maps.google.com/..."
+                >
+                <small>Paste Google Maps share link for live map and GPS routing.</small>
+            </div>
+
+            <!-- Section 3: Rating & Media -->
+            <div class="form-section-divider">
+                <span class="icon">⭐</span>
+                <div>
+                    <h3>Rating &amp; Hospital Media</h3>
+                </div>
+            </div>
+
+            <div class="form-grid-2">
+                <!-- Rating -->
+                <div class="form-group">
+                    <label for="rating">
+                        ⭐ Quality Rating (0 to 5)
+                    </label>
+                    <input
+                        type="number"
+                        id="rating"
+                        name="rating"
+                        min="0"
+                        max="5"
+                        step="0.1"
+                        value="4.5"
+                        placeholder="e.g. 4.5"
+                    >
+                    <small>Initial rating score (between 0 and 5).</small>
+                </div>
+
+                <!-- Image File -->
+                <div class="form-group">
+                    <label for="image">
+                        🖼️ Hospital Photo
+                    </label>
+                    <input
+                        type="file"
+                        id="image"
+                        name="image"
+                        accept="image/*"
+                        style="padding-top: 9px;"
+                    >
+                    <small>Upload JPG, PNG or WebP facade/campus image.</small>
+                </div>
+            </div>
+
+            <!-- Section 4: Facilities -->
+            <div class="form-section-divider">
+                <span class="icon">🚨</span>
+                <div>
+                    <h3>Critical Care &amp; Facilities</h3>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="days-selection-grid" style="gap: 14px;">
+                    <!-- Emergency -->
+                    <label class="day-pill-label" style="flex: 1; min-width: 200px; padding: 14px 18px;">
+                        <input
+                            type="checkbox"
+                            name="emergency"
+                            value="1"
+                        >
+                        <span>🚨 24/7 Emergency</span>
+                    </label>
+
+                    <!-- Ambulance -->
+                    <label class="day-pill-label" style="flex: 1; min-width: 200px; padding: 14px 18px;">
+                        <input
+                            type="checkbox"
+                            name="ambulance"
+                            value="1"
+                        >
+                        <span>🚑 Ambulance Fleet</span>
+                    </label>
+
+                    <!-- ICU -->
+                    <label class="day-pill-label" style="flex: 1; min-width: 200px; padding: 14px 18px;">
+                        <input
+                            type="checkbox"
+                            name="icu"
+                            value="1"
+                        >
+                        <span>🫀 Intensive Care Unit (ICU)</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="admin-form-actions">
+                <button type="submit" class="btn-save-action">
+                    ➕ Add Hospital Profile
+                </button>
+                <a href="{{ url_for('hospitals') }}" class="btn-cancel-action">
+                    Cancel
+                </a>
+            </div>
+
+        </form>
+    </div>
+
+    
+    <div style="text-align: center; margin-bottom: 40px;">
+        <a href="{{ url_for('hospitals') }}" style="color: var(--primary); font-weight: 700; font-size: 14px; text-decoration: none;">
+            ← Return to Hospitals Directory
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

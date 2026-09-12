@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}My Appointments — MediCompare{% endblock %}
+
+{% block content %}
+
+<div class="admin-dashboard">
+
+    <!-- =====================================================
+         PAGE HERO
+    ====================================================== -->
+    <div class="admin-hero" style="background: linear-gradient(135deg, #09172e 0%, #1e40af 55%, #0d9488 100%);">
+        <div>
+            <span class="eyebrow" style="color: #99f6e4;">PATIENT PORTAL</span>
+            <h1>📅 My Scheduled Appointments</h1>
+            <p>Track, manage, and review your doctor consultations and hospital bookings in real time.</p>
+        </div>
+        <div class="admin-hero-icon">📋</div>
+    </div>
+
+
+    <!-- =====================================================
+         APPOINTMENTS LIST
+    ====================================================== -->
+    {% if appointments %}
+        <div class="appointment-container">
+            {% for appointment in appointments %}
+                <article class="appointment-card">
+
+                    <!-- Card Header -->
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px;">
+                        <div>
+                            <span style="font-size: 11px; font-weight: 800; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase;">
+                                HOSPITAL &amp; CLINIC
+                            </span>
+                            <h2>{{ appointment.hospital_name }}</h2>
+                            <p style="color: var(--text-muted); font-size: 13px; margin: 2px 0 0;">
+                                📍 {{ appointment.city or "Location unavailable" }}
+                            </p>
+                        </div>
+
+                        <!-- Status Badge -->
+                        <div>
+                            {% if appointment.status == "Approved" %}
+                                <span class="status-approved">
+                                    🟢 Confirmed &amp; Approved
+                                </span>
+                            {% elif appointment.status == "Rejected" %}
+                                <span class="status-rejected">
+                                    🔴 Rejected
+                                </span>
+                            {% elif appointment.status == "Cancelled" %}
+                                <span class="status-cancelled">
+                                    ⚫ Cancelled
+                                </span>
+                            {% else %}
+                                <span class="status-pending">
+                                    🟡 Pending Approval
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <hr style="border: none; border-top: 1px solid var(--border-subtle); margin: 16px 0;">
+
+                    <!-- Doctor & Schedule Details -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; font-size: 14px;">
+                        <div style="background: var(--surface-subtle); padding: 12px; border-radius: 12px;">
+                            <span style="font-size: 11px; color: var(--text-muted); display: block; font-weight: 700;">DOCTOR</span>
+                            <strong style="color: var(--text-heading);">👨‍⚕️ {{ appointment.doctor_name }}</strong>
+                            <div style="font-size: 12px; color: var(--primary); font-weight: 600;">{{ appointment.specialization }}</div>
+                        </div>
+
+                        <div style="background: var(--surface-subtle); padding: 12px; border-radius: 12px;">
+                            <span style="font-size: 11px; color: var(--text-muted); display: block; font-weight: 700;">CONSULTATION FEE</span>
+                            <strong style="color: var(--emerald); font-size: 16px;">₹{{ appointment.consultation_fee or 0 }}</strong>
+                            <div style="font-size: 11px; color: var(--text-muted);">Payable at clinic</div>
+                        </div>
+                    </div>
+
+                    <!-- Date & Time Chips -->
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px;">
+                        <div style="display: inline-flex; align-items: center; gap: 6px; background: #eff6ff; color: var(--primary-dark); font-weight: 700; font-size: 13px; padding: 6px 14px; border-radius: 10px; border: 1px solid #bfdbfe;">
+                            📅 {{ appointment.appointment_date }}
+                        </div>
+
+                        {% if appointment.appointment_time %}
+                            <div style="display: inline-flex; align-items: center; gap: 6px; background: #ecfeff; color: #0e7490; font-weight: 700; font-size: 13px; padding: 6px 14px; border-radius: 10px; border: 1px solid #a5f3fc;">
+                                🕐 {{ appointment.appointment_time }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Reason -->
+                    {% if appointment.reason %}
+                        <div style="background: #f8fafc; border-left: 3px solid var(--primary); padding: 10px 14px; border-radius: 0 10px 10px 0; margin-bottom: 18px; font-size: 13px; color: var(--text-body);">
+                            <strong style="display: block; font-size: 11px; color: var(--text-muted); text-transform: uppercase;">SYMPTOMS / NOTES</strong>
+                            {{ appointment.reason }}
+                        </div>
+                    {% endif %}
+
+                    <!-- Cancel Action -->
+                    {% if appointment.status == "Pending" or appointment.status == "Approved" %}
+                        <div style="margin-top: 10px;">
+                            <a
+                                href="/cancel-appointment/{{ appointment.id }}"
+                                class="cancel-btn"
+                                onclick="return confirm('Are you sure you want to cancel this appointment?');"
+                            >
+                                ✕ Cancel This Appointment
+                            </a>
+                        </div>
+                    {% endif %}
+
+                </article>
+            {% endfor %}
+        </div>
+
+    {% else %}
+
+        <!-- Empty State -->
+        <div class="empty-modern">
+            <div>📅</div>
+            <h2>No Appointments Found</h2>
+            <p>You haven't scheduled any doctor appointments yet. Browse our hospital directory to find specialists.</p>
+            <a href="/" class="btn btn-primary">
+                🏥 Find a Hospital &amp; Book Now
+            </a>
+        </div>
+
+    {% endif %}
+
+
+    <!-- Back Link -->
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="/" style="color: var(--primary); font-weight: 700; font-size: 14px;">
+            ← Back to Hospitals Directory
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

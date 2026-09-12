@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}My Saved Hospitals — MediCompare{% endblock %}
+
+{% block content %}
+
+<div class="favorites-page">
+
+    <!-- =====================================================
+         PAGE HERO
+    ====================================================== -->
+    <section class="favorites-hero">
+        <div class="favorites-hero-content">
+            <div class="favorites-eyebrow">
+                <span class="pulse-dot"></span> SAVED HEALTHCARE COLLECTION
+            </div>
+
+            <h1>
+                Your Bookmarked
+                <br>
+                <span>Favorite Hospitals.</span>
+            </h1>
+
+            <p>
+                Quickly revisit, compare facilities, and check doctor appointment availability for the healthcare institutions in your personal portfolio.
+            </p>
+        </div>
+    </section>
+
+
+    <!-- =====================================================
+         FAVORITES PORTFOLIO SECTION
+    ====================================================== -->
+    <section class="favorites-section">
+
+        <div class="favorites-header">
+            <div>
+                <span class="eyebrow">PERSONAL PORTFOLIO</span>
+                <h2 style="font-size: 26px; color: var(--text-heading); margin: 4px 0;">Saved Healthcare Providers</h2>
+                <p style="color: var(--text-muted); font-size: 14px; margin: 0;">Verified medical institutions bookmarked for rapid access and head-to-head benchmarking.</p>
+            </div>
+
+            {% if favorites %}
+                <div class="favorites-count-pill">
+                    <span>❤️</span>
+                    <span><strong>{{ favorites|length }}</strong> Saved Facilit{% if favorites|length == 1 %}y{% else %}ies{% endif %}</span>
+                </div>
+            {% endif %}
+        </div>
+
+        {% if favorites %}
+            <div class="favorites-grid">
+                {% for hospital in favorites %}
+                    <article class="favorite-card-new">
+
+                        <!-- Hospital Image Banner -->
+                        <div class="favorite-card-image">
+                            {% if hospital['image'] %}
+                                <img
+                                    src="{{ url_for('uploaded_file', filename=hospital['image']) }}"
+                                    alt="{{ hospital['hospital_name'] }}"
+                                    loading="lazy"
+                                >
+                            {% else %}
+                                <div class="favorite-image-placeholder">
+                                    <span>🏥</span>
+                                </div>
+                            {% endif %}
+
+                            <!-- Floating Saved Badge -->
+                            <div class="favorite-badge-floating">
+                                <span>❤️</span> SAVED
+                            </div>
+
+                            {% if hospital.hospital_type %}
+                                <span class="type-chip">
+                                    {{ hospital.hospital_type }}
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Card Body Content -->
+                        <div class="favorite-card-body">
+
+                            <!-- Rating Line -->
+                            <div class="rating-line">
+                                <span class="rating-pill">
+                                    ⭐ {{ hospital.rating or "4.5" }}
+                                </span>
+                                <span style="font-size: 12px; color: var(--text-muted); font-weight: 600;">
+                                    Verified Provider
+                                </span>
+                            </div>
+
+                            <!-- Hospital Title -->
+                            <h3>{{ hospital.hospital_name }}</h3>
+
+                            <!-- Location -->
+                            <p class="location-line">
+                                <span>📍</span> {{ hospital.city or "Location unavailable" }}
+                                {% if hospital.address %}
+                                    <span style="color: var(--text-light); font-size: 12px;">• {{ hospital.address }}</span>
+                                {% endif %}
+                            </p>
+
+                            <!-- Facility Row -->
+                            <div class="facility-row" style="margin-bottom: 16px;">
+                                {% if hospital.emergency %}
+                                    <span class="fac-emergency">🚑 24/7 Emergency</span>
+                                {% endif %}
+
+                                {% if hospital.ambulance %}
+                                    <span class="fac-ambulance">🚐 Ambulance</span>
+                                {% endif %}
+
+                                {% if hospital.icu %}
+                                    <span class="fac-icu">🫀 ICU Active</span>
+                                {% endif %}
+                            </div>
+
+                            <!-- Action Toolbar -->
+                            <div class="favorite-actions-row">
+                                <a
+                                    href="/hospital/{{ hospital.id }}"
+                                    class="fav-btn-view"
+                                >
+                                    View Hospital <span>→</span>
+                                </a>
+
+                                <a
+                                    href="/compare?hospital1={{ hospital.id }}"
+                                    class="fav-btn-icon compare"
+                                    title="Compare this hospital side-by-side"
+                                >
+                                    ⚖️
+                                </a>
+
+                                <a
+                                    href="/remove-favorite/{{ hospital.id }}"
+                                    class="fav-btn-icon delete"
+                                    onclick="return confirm('Remove {{ hospital.hospital_name }} from your favorites?');"
+                                    title="Remove from favorites"
+                                >
+                                    🗑️
+                                </a>
+                            </div>
+
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+
+            <!-- Explore More Card -->
+            <div class="favorites-explore-card">
+                <div>
+                    <span class="eyebrow">EXPAND YOUR PORTFOLIO</span>
+                    <h3>Looking for more healthcare options?</h3>
+                    <p>Search over dozens of hospitals, discover specialist doctors, and compare surgical packages.</p>
+                </div>
+
+                <a href="/" class="btn-save-action" style="white-space: nowrap;">
+                    Explore Directory <span>→</span>
+                </a>
+            </div>
+
+        {% else %}
+
+            <!-- Empty Favorites State -->
+            <div class="empty-modern" style="margin: 40px 0 60px;">
+                <div>❤️</div>
+                <h2>Your Favorites Collection is Empty</h2>
+                <p>
+                    You haven't bookmarked any hospitals yet. Browse through our healthcare directory and click the <strong>"Save to Favorites"</strong> heart icon on any hospital profile to keep it handy here.
+                </p>
+                <a href="/" class="btn-save-action" style="margin-top: 15px;">
+                    Browse Hospitals Directory <span>→</span>
+                </a>
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- Back Link -->
+    <div class="favorites-back">
+        <a href="/">
+            ← Return to Hospitals Directory
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

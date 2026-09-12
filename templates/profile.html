@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile &amp; Health Passport — MediCompare{% endblock %}
+
+{% block content %}
+
+<div class="profile-page">
+
+    <!-- =====================================================
+         PROFILE HERO / HEALTH PASSPORT
+    ====================================================== -->
+    <section class="profile-hero">
+        <div class="profile-hero-content">
+            <div class="profile-avatar-large">
+                {% if user and user.full_name %}
+                    {{ user.full_name[0]|upper }}
+                {% elif session.get('user_name') %}
+                    {{ session.get('user_name')[0]|upper }}
+                {% else %}
+                    U
+                {% endif %}
+            </div>
+
+            <div class="profile-hero-text">
+                <span class="profile-eyebrow">
+                    <span class="pulse-dot"></span> MEDICOMPARE HEALTH PASSPORT
+                </span>
+
+                <h1>
+                    {% if user and user.full_name %}
+                        {{ user.full_name }}
+                    {% elif session.get('user_name') %}
+                        {{ session.get('user_name') }}
+                    {% else %}
+                        Patient Account
+                    {% endif %}
+                </h1>
+
+                <p>
+                    Manage your personal account credentials, saved hospital preferences, and appointment activity.
+                </p>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- =====================================================
+         PROFILE CONTENT & SIDEBAR
+    ====================================================== -->
+    <section class="profile-content">
+        <div class="profile-layout">
+
+            <!-- SIDEBAR -->
+            <aside class="profile-sidebar">
+                <div class="profile-menu-card">
+                    <div class="profile-menu-title">ACCOUNT NAVIGATION</div>
+
+                    <a href="/profile" class="profile-menu-item active">
+                        <span class="menu-icon">👤</span>
+                        <span>My Profile</span>
+                    </a>
+
+                    <a href="/favorites" class="profile-menu-item">
+                        <span class="menu-icon">❤️</span>
+                        <span>Favorite Hospitals</span>
+                    </a>
+
+                    <a href="/my-appointments" class="profile-menu-item">
+                        <span class="menu-icon">📅</span>
+                        <span>My Appointments</span>
+                    </a>
+
+                    <div class="profile-menu-divider"></div>
+
+                    <a href="/" class="profile-menu-item">
+                        <span class="menu-icon">🏥</span>
+                        <span>Browse Hospitals</span>
+                    </a>
+
+                    <a href="/compare" class="profile-menu-item">
+                        <span class="menu-icon">⚖️</span>
+                        <span>Compare Hospitals</span>
+                    </a>
+
+                    <a href="/service-comparison" class="profile-menu-item">
+                        <span class="menu-icon">💊</span>
+                        <span>Treatment Costs</span>
+                    </a>
+                </div>
+
+                <!-- Account Status Card -->
+                <div class="account-status-card">
+                    <div class="status-icon">✓</div>
+                    <div>
+                        <strong>Account Verified</strong>
+                        <p>Your MediCompare profile is active and ready for appointments.</p>
+                    </div>
+                </div>
+            </aside>
+
+
+            <!-- MAIN CONTENT -->
+            <main class="profile-main">
+
+                <!-- 1. User Information Card -->
+                <div class="profile-card">
+                    <div class="profile-card-header">
+                        <div>
+                            <span class="section-label">ACCOUNT CREDENTIALS</span>
+                            <h2>Personal Information</h2>
+                            <p>Primary details associated with your patient account.</p>
+                        </div>
+                        <div class="profile-card-icon">👤</div>
+                    </div>
+
+                    <!-- 2x2 Information Grid -->
+                    <div class="profile-information-grid">
+                        <!-- Full Name -->
+                        <div class="profile-info-tile">
+                            <div class="info-tile-icon blue">👤</div>
+                            <div class="info-tile-content">
+                                <span class="info-tile-label">Full Name</span>
+                                <strong class="info-tile-value">
+                                    {{ user.full_name if user else (session.get('user_name') or 'Not provided') }}
+                                </strong>
+                                <span class="info-tile-badge">✓ Primary Account</span>
+                            </div>
+                        </div>
+
+                        <!-- Email Address -->
+                        <div class="profile-info-tile">
+                            <div class="info-tile-icon teal">✉️</div>
+                            <div class="info-tile-content">
+                                <span class="info-tile-label">Email Address</span>
+                                <strong class="info-tile-value">
+                                    {{ user.email if user else (session.get('user_email') or 'Not provided') }}
+                                </strong>
+                                <span class="info-tile-badge">✓ Verified Contact</span>
+                            </div>
+                        </div>
+
+                        <!-- Saved Hospitals -->
+                        <div class="profile-info-tile">
+                            <div class="info-tile-icon rose">❤️</div>
+                            <div class="info-tile-content">
+                                <span class="info-tile-label">Saved Hospitals</span>
+                                <strong class="info-tile-value">
+                                    {{ total_favorites or 0 }} Bookmarked
+                                </strong>
+                                <a href="/favorites" style="font-size: 12px; font-weight: 700; color: var(--primary); text-decoration: none; display: inline-block; margin-top: 4px;">
+                                    View Collection →
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Appointments Scheduled -->
+                        <div class="profile-info-tile">
+                            <div class="info-tile-icon purple">📅</div>
+                            <div class="info-tile-content">
+                                <span class="info-tile-label">Appointments</span>
+                                <strong class="info-tile-value">
+                                    {{ total_appointments or 0 }} Total Bookings
+                                </strong>
+                                <a href="/my-appointments" style="font-size: 12px; font-weight: 700; color: var(--primary); text-decoration: none; display: inline-block; margin-top: 4px;">
+                                    Manage Bookings →
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- 2. Activity Shortcuts Card -->
+                <div class="profile-card">
+                    <div class="profile-card-header">
+                        <div>
+                            <span class="section-label">QUICK HUB</span>
+                            <h2>Healthcare Activity</h2>
+                            <p>Fast access to your essential patient tools.</p>
+                        </div>
+                        <div class="profile-card-icon">⚡</div>
+                    </div>
+
+                    <div class="profile-activity-grid">
+                        <a href="/favorites" class="activity-card">
+                            <div class="activity-icon favorite-icon">❤️</div>
+                            <div class="activity-content">
+                                <span>BOOKMARKED</span>
+                                <h3>Saved Hospitals</h3>
+                                <p>Revisit and compare your favorite clinics.</p>
+                            </div>
+                            <span class="activity-arrow">Open Collection →</span>
+                        </a>
+
+                        <a href="/my-appointments" class="activity-card">
+                            <div class="activity-icon appointment-icon">📅</div>
+                            <div class="activity-content">
+                                <span>CONSULTATIONS</span>
+                                <h3>My Appointments</h3>
+                                <p>Track pending and confirmed doctor visits.</p>
+                            </div>
+                            <span class="activity-arrow">View Bookings →</span>
+                        </a>
+
+                        <a href="/service-comparison" class="activity-card">
+                            <div class="activity-icon comparison-icon">💊</div>
+                            <div class="activity-content">
+                                <span>PRICING ENGINE</span>
+                                <h3>Compare Treatment Costs</h3>
+                                <p>Check diagnostic and procedure fee averages.</p>
+                            </div>
+                            <span class="activity-arrow">Compare Prices →</span>
+                        </a>
+                    </div>
+                </div>
+
+
+                <!-- 3. Account Actions / Logout -->
+                <div class="profile-card">
+                    <div class="profile-card-header">
+                        <div>
+                            <span class="section-label">SECURITY &amp; SESSION</span>
+                            <h2>Account Actions</h2>
+                            <p>Manage your login session securely.</p>
+                        </div>
+                        <div class="profile-card-icon">🔒</div>
+                    </div>
+
+                    <div class="account-actions">
+                        <a href="/logout" class="account-action logout-action">
+                            <div class="action-icon">↪</div>
+                            <div>
+                                <strong>Log Out of MediCompare</strong>
+                                <p>End your active patient session securely on this browser.</p>
+                            </div>
+                            <span class="action-arrow">→</span>
+                        </a>
+                    </div>
+                </div>
+
+            </main>
+
+        </div>
+    </section>
+
+    <!-- Back Link -->
+    <div class="profile-back">
+        <a href="/">
+            ← Return to Hospitals Directory
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}
