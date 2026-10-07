@@ -15,7 +15,7 @@ def uploaded_file(filename):
     )
 
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
-app.secret_key = "medicompare123"
+app.secret_key = "MediCompare-Krish-2026-Secret-Key"
 
 ADMIN_EMAIL = "krishshinde98@gmail.com"
 

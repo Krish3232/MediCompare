@@ -17,12 +17,15 @@ env/
 *.db
 *.sqlite
 *.sqlite3
+!database/medicompare.db
 
 # Flask
 instance/
 
 # Uploaded/generated files
-static/uploads/
+# static/uploads/
+!static/uploads/
+!static/uploads/**
 
 # IDE
 .vscode/
