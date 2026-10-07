@@ -5,7 +5,8 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from urllib.parse import quote
 
 app = Flask(__name__)
-UPLOAD_FOLDER = os.path.join("static", "uploads", "hospitals")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_FOLDER = os.path.join(BASE_DIR, "static", "uploads", "hospitals")
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 @app.route("/uploads/<filename>")
 def uploaded_file(filename):
